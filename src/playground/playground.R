@@ -1,4 +1,4 @@
-# loading required libraries ----------------------------------------------------------
+# loading required libraries --------------------------------------------------
 # FGVR library for data science power-ups
 # library(fgvr)
 
@@ -6,6 +6,8 @@
 library(rgdal)
 library(raster)
 library(spdep)
+library(bamlss)
+library(shapefiles)
 
 # libraries for data prep
 # library(dplyr)
@@ -44,11 +46,11 @@ library(spdep)
 # library(hmeasure)
 # library(pROC)
 
-# loading other scripts do be used here ----------------------------------------------
+# loading other scripts do be used here ---------------------------------------
 source("./src/datapreparation/step_00_config_environment.R")
 source("./src/datapreparation/step_01_create_functions.R")
 source("./src/datapreparation/step_02_data_ingestion.R")
-# source("./src/datapreparation/step_03_data_cleaning.R")
+source("./src/datapreparation/step_03_data_cleaning.R")
 # source("./src/datapreparation/step_04_label_translation.R")
 # source("./src/datapreparation/step_05_data_enhancement.R")
 #source("./src/datapreparation/step_06_dataset_preparation.R")
@@ -57,13 +59,24 @@ source("./src/datapreparation/step_02_data_ingestion.R")
 # doing some spatial exploratory analysis -------------------------------------
 View(target)
 plot(target)
+
+# getting the centroids of the polygons
 xy <- coordinates(target) # getting the centroids of the polygons
 
-# adjacent polygons
-w <- poly2nb(target, row.names = target$ID)
-class(w)
-summary(w)
-str(w)
+# neighborhood matrix from spatial polygons / adjacent polygons ---------------
+
+# using spdep library
+ap <- poly2nb(target, row.names = target$ID)
+class(ap)
+summary(ap)
+str(ap)
 
 plot(target, col = 'cadetblue2', border = 'deepskyblue4', lwd = 2)
-plot(w, xy, col = 'red', lwd = 2, add = TRUE)
+plot(ap, xy, col = 'red', lwd = 2, add = TRUE)
+
+# using bamlss library
+nm <- neighbormatrix(target)
+print(nm)
+plotneighbors(target)
+plotneighbors(target, type = "delaunay")
+plotneighbors(target, type = "dist", d1 = 0, d2 = 0.15)
