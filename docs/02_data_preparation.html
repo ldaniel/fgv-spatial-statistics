@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data preparation</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  { background-color: #f8f8f8; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">FGV MBA</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-hand-holding-usd"></span>
+     
+    Business Case
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_about_the_data.html">About the Data</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Initial Analysis</li>
+    <li>
+      <a href="02_data_preparation.html">Data Preparation</a>
+    </li>
+    <li>
+      <a href="03_exploration_report.html">Data Exploration</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fa fa-file-invoice-dollar"></span>
+     
+    Final Report
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="conclusion.html">Conclusion</a>
+    </li>
+    <li>
+      <a href="references.html">References</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data preparation</h1>
+<h4 class="date">August, 2019</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#using-a-step-by-step-approach"><span class="toc-section-number">1</span> Using a step by step approach</a></li>
+<li><a href="#create-functions-step-1"><span class="toc-section-number">2</span> Create Functions (step 1)</a><ul>
+<li><a href="#function-1"><span class="toc-section-number">2.1</span> Function 1</a></li>
+<li><a href="#function-2"><span class="toc-section-number">2.2</span> Function 2</a></li>
+<li><a href="#function-3"><span class="toc-section-number">2.3</span> Function 3</a></li>
+<li><a href="#function-n"><span class="toc-section-number">2.4</span> Function n</a></li>
+</ul></li>
+<li><a href="#data-ingestion-step-2"><span class="toc-section-number">3</span> Data Ingestion (step 2)</a></li>
+<li><a href="#data-cleaning-step-3"><span class="toc-section-number">4</span> Data Cleaning (step 3)</a></li>
+<li><a href="#label-translation-step-4"><span class="toc-section-number">5</span> Label Translation (step 4)</a></li>
+<li><a href="#data-enhancement-step-5"><span class="toc-section-number">6</span> Data Enhancement (step 5)</a></li>
+<li><a href="#data-preparation-for-predictive-modeling-step-6"><span class="toc-section-number">7</span> Data Preparation for Predictive Modeling (step 6)</a><ul>
+<li><a href="#selecting-the-target-dataset"><span class="toc-section-number">7.1</span> Selecting the target dataset</a></li>
+<li><a href="#splitting-dataset-into-train-and-test-data"><span class="toc-section-number">7.2</span> Splitting dataset into Train and Test data</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="using-a-step-by-step-approach" class="section level1">
+<h1><span class="header-section-number">1</span> Using a step by step approach</h1>
+<p>Before starting the analysis for the {{Spatial-Statistics}}, a few important steps were taken in order to prepare the source data files. These steps are listed below:</p>
+<ul>
+<li><strong>Step 01</strong>: Create Functions;</li>
+<li><strong>Step 02</strong>: Data Ingestion;</li>
+<li><strong>Step 03</strong>: Data Cleaning;</li>
+<li><strong>Step 04</strong>: Label Translation;</li>
+<li><strong>Step 05</strong>: Data Enhancement;</li>
+<li><strong>Step 06</strong>: Dataset Preparation.</li>
+</ul>
+<hr />
+</div>
+<div id="create-functions-step-1" class="section level1">
+<h1><span class="header-section-number">2</span> Create Functions (step 1)</h1>
+<p>This step create functions to be used in the next steps. Following, all functions created are described.</p>
+<div id="function-1" class="section level2">
+<h2><span class="header-section-number">2.1</span> Function 1</h2>
+<p>Description of function 1.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Function 1 code</span></a></code></pre></div>
+</div>
+<div id="function-2" class="section level2">
+<h2><span class="header-section-number">2.2</span> Function 2</h2>
+<p>Description of function 2.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># Function 2 code</span></a></code></pre></div>
+</div>
+<div id="function-3" class="section level2">
+<h2><span class="header-section-number">2.3</span> Function 3</h2>
+<p>Description of function 3.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Function 3 code</span></a></code></pre></div>
+</div>
+<div id="function-n" class="section level2">
+<h2><span class="header-section-number">2.4</span> Function n</h2>
+<p>Description of function n.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># Function n code</span></a></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="data-ingestion-step-2" class="section level1">
+<h1><span class="header-section-number">3</span> Data Ingestion (step 2)</h1>
+<p>The process of data ingestion — preparing data for analysis — usually includes steps called extract (taking the data from its current location), transform (cleansing and normalizing the data), and load (placing the data in a database where it can be analyzed).</p>
+<p>During this step, in addition to the loading data processes, it was performed data casting, column renaming and small touch-ups. The list below describe each table adjustment taken:</p>
+<ul>
+<li><strong>Table 1</strong>: short description about what was done in the table 1;</li>
+<li><strong>Table 2</strong>: short description about what was done in the table 2;</li>
+<li><strong>Table 3</strong>: short description about what was done in the table 3;</li>
+<li><strong>Table n</strong>: short description about what was done in the table n;</li>
+</ul>
+<hr />
+</div>
+<div id="data-cleaning-step-3" class="section level1">
+<h1><span class="header-section-number">4</span> Data Cleaning (step 3)</h1>
+<p>The objective of this step is analysing missing values and other strange conditions. In order to accomplish this task, a few R functions were used to quickly discover missing values, like NA and empty fields.</p>
+<p>First thing done, was fixing observations in k_symbol transaction table with ’ ’ (one space) to empty string (’’), using the following command.</p>
+<p>Then, the command below was used to find out any NA values in each table.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">sum</span>(<span class="kw">is.na</span>(x)))</a></code></pre></div>
+<p>Solely the <strong>transaction</strong> table has NA values, in the following columns:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>to-do</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the following command was used in each table to find out where empty values was hidden.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">table</span>(<span class="kw">as.character</span>(x) <span class="op">==</span><span class="st">&quot;&quot;</span>)[<span class="st">&quot;TRUE&quot;</span>])</a></code></pre></div>
+<p>Again, only the <strong>transaction</strong> table had empty values, according to the table below:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>to-do.NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>For the exploration analysis report, we did not take any additional action, since the missing values was not relevant.</p>
+<hr />
+</div>
+<div id="label-translation-step-4" class="section level1">
+<h1><span class="header-section-number">5</span> Label Translation (step 4)</h1>
+<p>In order to make the data information more understandable, it was translated some relevant labels and domains from Czech to English.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># Translating relevant labels and domains to english --------------------------------------------</span></a>
+<a class="sourceLine" id="cb7-2" title="2"></a>
+<a class="sourceLine" id="cb7-3" title="3">mytable<span class="op">$</span>x_var_<span class="dv">1</span> &lt;-<span class="st"> </span>plyr<span class="op">::</span><span class="kw">mapvalues</span>(mytable<span class="op">$</span>x_var_<span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb7-4" title="4">                                   <span class="kw">c</span>(<span class="st">&#39;Other_Language_Column_Name1&#39;</span>, </a>
+<a class="sourceLine" id="cb7-5" title="5">                                     <span class="st">&#39;Other_Language_Column_Name2&#39;</span>, </a>
+<a class="sourceLine" id="cb7-6" title="6">                                     <span class="st">&#39;Other_Language_Column_Name3&#39;</span>),</a>
+<a class="sourceLine" id="cb7-7" title="7">                                   <span class="kw">c</span>(<span class="st">&#39;English_Column_Name1&#39;</span>, </a>
+<a class="sourceLine" id="cb7-8" title="8">                                     <span class="st">&#39;English_Column_Name2&#39;</span>, </a>
+<a class="sourceLine" id="cb7-9" title="9">                                     <span class="st">&#39;English_Column_Name3&#39;</span>))</a></code></pre></div>
+<hr />
+</div>
+<div id="data-enhancement-step-5" class="section level1">
+<h1><span class="header-section-number">6</span> Data Enhancement (step 5)</h1>
+<p>This step aims to improve the analysis by adding auxiliary information. Data enhancement is all about making sure any data that is coming into the business is being looked at with a critical eye and is being filtered down to maximize its value.</p>
+<p>&lt;Describe what kind of data enhancement you have to do. Include chuncks of code to ilustrate what is necessary.&gt;</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># your code with the enhancements goes here</span></a></code></pre></div>
+<hr />
+</div>
+<div id="data-preparation-for-predictive-modeling-step-6" class="section level1">
+<h1><span class="header-section-number">7</span> Data Preparation for Predictive Modeling (step 6)</h1>
+<div id="selecting-the-target-dataset" class="section level2">
+<h2><span class="header-section-number">7.1</span> Selecting the target dataset</h2>
+<p>The below function was created to be used in the modeling exercises to be performed, the idea is to have a standard way to get the prepared data set already prepared with correct data types and dummies.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co"># your code with the data preparation goes here</span></a></code></pre></div>
+</div>
+<div id="splitting-dataset-into-train-and-test-data" class="section level2">
+<h2><span class="header-section-number">7.2</span> Splitting dataset into Train and Test data</h2>
+<p>The below function was created to be used in the modeling exercises to be split the source_dataset into train and test datasets.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">mydataset &lt;-<span class="st"> </span>fgvr<span class="op">::</span><span class="kw">createTestAndTrainSamples</span>(<span class="dt">dataset =</span> you_dataset_name, <span class="dt">yvar =</span> <span class="st">&quot;your_y_var&quot;</span>, </a>
+<a class="sourceLine" id="cb10-2" title="2">                                             <span class="dt">seed =</span> <span class="dv">12345</span>, <span class="dt">percentage =</span> <span class="fl">0.7</span>)</a></code></pre></div>
+<p>To make sure all the models uses the same datasets for Train and Testing we are saving the initial sampling to be reused across the models.</p>
+<p>This will ensure consistency when comparing the models against each other.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co"># calling function to split and create train and test databases</span></a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="co"># this function will split the dataset into train and test data and save the sampling in disk</span></a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="co"># to resample just delete &#39;./models/source_train_test_dataset.rds&#39; file and rerun this script</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="cf">if</span> (<span class="kw">file.exists</span>(<span class="st">&#39;./models/source_train_test_dataset.rds&#39;</span>)) {</a>
+<a class="sourceLine" id="cb11-5" title="5">  source_train_test_dataset &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&#39;./models/source_train_test_dataset.rds&#39;</span>)</a>
+<a class="sourceLine" id="cb11-6" title="6">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb11-7" title="7">  source_train_test_dataset &lt;-<span class="st"> </span>mydataset</a>
+<a class="sourceLine" id="cb11-8" title="8">  <span class="kw">saveRDS</span>(source_train_test_dataset, <span class="st">&#39;./models/source_train_test_dataset.rds&#39;</span>)  </a>
+<a class="sourceLine" id="cb11-9" title="9">}</a></code></pre></div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
