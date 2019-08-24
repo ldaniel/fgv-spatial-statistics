@@ -1,0 +1,17 @@
+Base de dados Crime_mg - Campos:
+Codmuni: Código do município (fictício)
+ID: ID do município (número sequencial, único)
+Munic: Nome do município
+Area: Área do Município
+Indice94: Índice de criminalidade em 1994
+Indice95: Índice de criminalidade em 1995
+Gini_91: Índice de Gini em 1991
+Pop_94: População Total em 1994
+Pop_rur: População Rural em 1995
+Pop_urb: População Urbana em 1995
+Pop_fem: População Feminina em 1995
+Pop_mas: População Masculina em 1995
+Pop_tot: População Total em 1995
+Urblevel: Taxa de Urbanização do município
+X_coord: Coordenada X do centróide do município (Longitude)
+Y_coord: Coordenada Y do centróide do município (Latitude)
