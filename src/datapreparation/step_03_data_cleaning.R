@@ -1,10 +1,23 @@
 # analysing missing values and other strange conditions -----------------------
 
 # looking for NAs
-mytable_na_cols <- sapply(mytable, function(x) sum(is.na(x)))
+mytable_na_cols <- sapply(target@data, function(x) sum(is.na(x)))
 
 # looking for empty values
-mytable_empty_cols <-  sapply(mytable, function(x) table(as.character(x) == "" | as.character(x) == " ")["TRUE"])
+mytable_empty_cols <-  sapply(target@data, function(x) table(as.character(x) == "" | as.character(x) == " ")["TRUE"])
 
-# fixing NAs and missing values
-#mytable <- mutate(mytable, x_importance = ifelse(is.na(x_importance), "1", x_importance))
+# there is 33 cities in which the variables POP_RUR, POP_URB, POP_FEM, 
+# POP_MAS, POP_TOT have zero in their values, however the column POP_94
+# has value greater than zero. so, the strategy is to produce the value
+# for the missing columns based on the average values for the rest of
+# cities in Minas Gerais.
+
+# TO-DO: tratar as colunas com valor zero
+
+dataProcessedDirectory <- "./data/processed/"
+shapefile_to_write <- paste(dataProcessedDirectory, "crime_mg_processed.shp", sep = "")
+writeOGR(target, 
+         dsn = shapefile_to_write, 
+         driver ="ESRI Shapefile", 
+         layer = "cities", 
+         overwrite_layer = TRUE)
