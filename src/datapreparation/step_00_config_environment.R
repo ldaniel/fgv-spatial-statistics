@@ -6,6 +6,9 @@ invisible(gc())
 # clear console screen
 cat("\014")
 
+# clear plots
+dev.off()
+
 # setting the environment -----------------------------------------------------
 options(encoding = "UTF-8")
 
