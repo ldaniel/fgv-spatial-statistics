@@ -152,8 +152,6 @@ par(mar = c(4,4,1.5,0.5))
 moran.plot(target$AREA, 
            listw = lw, 
            zero.policy = T,
-           xlim = c(0,100),
-           ylim = c(0,100), 
            pch = 16, 
            col = "black",
            cex = .5, 
