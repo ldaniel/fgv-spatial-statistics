@@ -12,9 +12,12 @@ mytable_empty_cols <-  sapply(target@data, function(x) table(as.character(x) == 
 # for the missing columns based on the average values for the rest of
 # cities in Minas Gerais.
 
-# TO-DO: tratar as colunas com valor zero
+# converting factor columns from text to numeric
+target$POP_RUR <- as.numeric(as.character(target$POP_RUR))
+target$POP_URB <- as.numeric(as.character(target$POP_URB))
+target$POP_FEM <- as.numeric(as.character(target$POP_FEM))
+target$POP_MAS <- as.numeric(as.character(target$POP_MAS))
 
-target$POP_RUR <- as.numeric(as.factor(target$POP_RUR))
-target$POP_URB <- as.numeric(as.factor(target$POP_URB))
-target$POP_FEM <- as.numeric(as.factor(target$POP_FEM))
-target$POP_MAS <- as.numeric(as.factor(target$POP_MAS))
+# TO-DO: tratar as colunas com valor zero
+target.dataframe <- as(target, "data.frame")
+temp <- filter(target.dataframe, POP_RUR == 0)
