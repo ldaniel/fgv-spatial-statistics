@@ -1,6 +1,6 @@
 ---
 title: "Data preparation"
-date: "August, 2019"
+date: "September, 2019"
 ---
 
 ```{r setup_preparation, include=FALSE}
@@ -8,22 +8,12 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(fig.pos =  "h")
 knitr::opts_knit$set(root.dir = "../")
 
-# loading required libraries
-library(rmarkdown)
-library(dplyr)
-library(ggplot2)
-library(ggthemes)
-library(ggalluvial)
-library(tidyr)
-library(lubridate)
-library(stringr)
-library(VIM)
-library(psych)
-library(feather)
-library(tinytex)
-library(knitr)
-library(leaflet)
-library(geojsonio)
+# libraries for spatial data manipulation
+library(rgdal)
+library(raster)
+library(spdep)
+library(bamlss)
+library(shapefiles)
 ```
 
 ```{r scripts_data_preparation, include=FALSE}
