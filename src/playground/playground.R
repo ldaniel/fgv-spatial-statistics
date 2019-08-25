@@ -26,6 +26,7 @@ library(shapefiles)
 
 # libraries for plots and visualization
 library(RColorBrewer)
+library(tmap)
 # library(ggplot2)
 # library(ggthemes)
 # library(ggcorrplot)
@@ -131,3 +132,8 @@ moran.plot(target$AREA,
            xlab = "Percent for Area",
            ylab = "Percent for Area (Spatial Lag)", 
            main = "Moran Scatterplot")
+
+# using tmap for high quality maps --------------------------------------------
+tmap_mode("view")
+tm_shape(target) +
+  tm_polygons("INDICE95") 
