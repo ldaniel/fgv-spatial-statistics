@@ -123,21 +123,20 @@ moran.test.POP_TOT  <- moran.test(target$POP_TOT, listw = lw, zero.policy = T)
 moran.test.URBLEVEL <- moran.test(target$URBLEVEL, listw = lw, zero.policy = T)
 moran.test.PIB_PC   <- moran.test(target$PIB_PC, listw = lw, zero.policy = T)
 
-meudataframe <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
-                      t(data.frame("INDICE94" = moran.test.INDICE94$estimate)),
-                      t(data.frame("INDICE95" = moran.test.INDICE95$estimate)),
-                      t(data.frame("GINI_91" = moran.test.GINI_91$estimate)),
-                      t(data.frame("POP_94" = moran.test.POP_94$estimate)),
-                      t(data.frame("POP_RUR" = moran.test.POP_RUR$estimate)),
-                      t(data.frame("POP_URB" = moran.test.POP_URB$estimate)),
-                      t(data.frame("POP_FEM" = moran.test.POP_FEM$estimate)),
-                      t(data.frame("POP_MAS" = moran.test.POP_MAS$estimate)),
-                      t(data.frame("POP_TOT" = moran.test.POP_TOT$estimate)),
-                      t(data.frame("URBLEVEL" = moran.test.URBLEVEL$estimate)),
-                      t(data.frame("PIB_PC" = moran.test.PIB_PC$estimate)))
-meudataframe
+moran.test.all <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
+                        t(data.frame("INDICE94" = moran.test.INDICE94$estimate)),
+                        t(data.frame("INDICE95" = moran.test.INDICE95$estimate)),
+                        t(data.frame("GINI_91" = moran.test.GINI_91$estimate)),
+                        t(data.frame("POP_94" = moran.test.POP_94$estimate)),
+                        t(data.frame("POP_RUR" = moran.test.POP_RUR$estimate)),
+                        t(data.frame("POP_URB" = moran.test.POP_URB$estimate)),
+                        t(data.frame("POP_FEM" = moran.test.POP_FEM$estimate)),
+                        t(data.frame("POP_MAS" = moran.test.POP_MAS$estimate)),
+                        t(data.frame("POP_TOT" = moran.test.POP_TOT$estimate)),
+                        t(data.frame("URBLEVEL" = moran.test.URBLEVEL$estimate)),
+                        t(data.frame("PIB_PC" = moran.test.PIB_PC$estimate)))
 
-
+print(moran.test.all)
 
 # Moran scatterplot
 par(mar=c(4,4,1.5,0.5))
