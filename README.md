@@ -1,12 +1,12 @@
 # Introduction
 
-:globe_with_meridians: Spatial analysis or spatial statistics includes any of the formal techniques which study entities using their topological, geometric, or geographic properties.
+Spatial analysis or spatial statistics includes any of the formal techniques which study entities using their topological, geometric, or geographic properties.
 
-:earth_americas: In this project, we developed a set of models and analysis for a given Minas Gerais crime shapefile.
+In this project, we developed a set of models and analysis for a given Minas Gerais crime shapefile.
 
-:octocat: This repository intends to present the work analysis for the *"Spatial Statistics"* class.
+This repository intends to present the work analysis for the *"Spatial Statistics"* class.
 
- :page_facing_up: See the final website report at: [https://ldaniel.github.io/Spatial-Statistics](https://ldaniel.github.io/Spatial-Statistics).
+:octocat: See the final website report at: [https://ldaniel.github.io/Spatial-Statistics](https://ldaniel.github.io/Spatial-Statistics).
 
 ## Professor
 - Eduardo de Rezende Francisco
