@@ -16,6 +16,7 @@ library(dplyr)
 
 
 # libraries for spatial data manipulation
+library(spatialreg)
 library(maps)
 library(maptools)    
 library(rgdal)     
@@ -122,10 +123,10 @@ moran.test.INDICE94 <- moran.test(target$INDICE94, listw = lw, zero.policy = T)
 moran.test.INDICE95 <- moran.test(target$INDICE95, listw = lw, zero.policy = T)
 moran.test.GINI_91  <- moran.test(target$GINI_91, listw = lw, zero.policy = T)
 moran.test.POP_94   <- moran.test(target$POP_94, listw = lw, zero.policy = T)
-moran.test.POP_RUR  <- moran.test(as.numeric(target$POP_RUR), listw = lw, zero.policy = T)
-moran.test.POP_URB  <- moran.test(as.numeric(target$POP_URB), listw = lw, zero.policy = T)
-moran.test.POP_FEM  <- moran.test(as.numeric(target$POP_FEM), listw = lw, zero.policy = T)
-moran.test.POP_MAS  <- moran.test(as.numeric(target$POP_MAS), listw = lw, zero.policy = T)
+moran.test.POP_RUR  <- moran.test(target$POP_RUR, listw = lw, zero.policy = T)
+moran.test.POP_URB  <- moran.test(target$POP_URB, listw = lw, zero.policy = T)
+moran.test.POP_FEM  <- moran.test(target$POP_FEM, listw = lw, zero.policy = T)
+moran.test.POP_MAS  <- moran.test(target$POP_MAS, listw = lw, zero.policy = T)
 moran.test.POP_TOT  <- moran.test(target$POP_TOT, listw = lw, zero.policy = T)
 moran.test.URBLEVEL <- moran.test(target$URBLEVEL, listw = lw, zero.policy = T)
 moran.test.PIB_PC   <- moran.test(target$PIB_PC, listw = lw, zero.policy = T)
@@ -196,6 +197,57 @@ legend("topleft", legend = labels, fill = colors, bty = "n")
 # variável independente (não pode ser Indice94, Codmuni, ID, X_coord nem 
 # Y_coord). Apresente o resultado da regressão linear simples e da regressão 
 # linear espacial. Apresente as equações e interprete seus coeficientes.
+
+res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
+                                space = "rgb")
+pal <- res.palette(5)
+par(mar=rep(0,4))
+
+# linear regresion model
+target.lm.model <- lm(INDICE95 ~ AREA, data = target)
+summary(target.lm.model)
+
+target.lm.model.residuals <- target.lm.model$residuals
+
+target.lm.model.class_fx <- classIntervals(target.lm.model.residuals, 
+                                           n = 5,
+                                           style = "fixed",
+                                           fixedBreaks = c(-50,-25,-5,5,25,50),
+                                           rtimes = 1)
+
+cols.lm <- findColours(target.lm.model.class_fx, pal)
+
+plot(target, col = cols.lm, main = "Residuals from OLS Model", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
+       legend = names(attr(cols, "table")), title = "Residuals from OLS Model",
+       ncol = 5)
+
+moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
+
+# SAR model
+target.sar.model <- lagsarlm(INDICE95 ~ AREA, 
+                             data = target, 
+                             listw = lw,
+                             zero.policy = T, 
+                             tol.solve = 1e-12)
+summary(target.sar.model)
+
+target.sar.model.residuals <- target.sar.model$residuals
+
+target.sar.model.class_fx <- classIntervals(target.sar.model.residuals, 
+                                            n = 5, 
+                                            style = "fixed",
+                                            fixedBreaks = c(-50,-25,-5,5,25,50),
+                                            rtimes = 1)
+
+cols.sar <- findColours(target.sar.model.class_fx, pal)
+
+plot(target, col = cols.sar, border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
+       legend = names(attr(cols, "table")), title = "Residuals from SAR Model",
+       ncol = 5)
+
+moran.test(target.sar.model.residuals, listw = lw, zero.policy = T)
 
 # Pergunta 3 ------------------------------------------------------------------
 # Para essa variável que você escolheu, o modelo espacial SAR apresentou ganhos 
