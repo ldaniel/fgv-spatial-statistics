@@ -192,7 +192,7 @@ moran.plot(target$AREA,
 # resultados comparados (equação, R2). Qual modelo você escolheria como final? 
 # Se desejar, apresente mapas que sustente sua justificativa.
 
-# Pergunta 8 (bônus 2) ----------------------------------------------------------
+# Pergunta 8 (bônus 2) --------------------------------------------------------
 # Produza um mapa de alta qualidade do shapefile crime_mg utilizando a extensão 
 # tmap. Apresente o código completo e o mapa produzido em sua resposta.
 
