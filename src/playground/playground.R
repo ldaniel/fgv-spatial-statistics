@@ -60,7 +60,6 @@ source("./src/datapreparation/step_04_label_translation.R")
 source("./src/datapreparation/step_05_data_enhancement.R")
 source("./src/datapreparation/step_06_dataset_preparation.R")
 
-
 # doing some spatial exploratory analysis -------------------------------------
 View(target)
 plot(target)
@@ -92,8 +91,8 @@ xy <- coordinates(target) # getting the centroids of the polygons
 
 # neighborhood matrix from spatial polygons / adjacent polygons
 
-# using spdep library
-ap <- poly2nb(target, row.names = target$ID)
+# using the spdep library
+ap <- poly2nb(target, queen=T)
 lw <- nb2listw(ap, style = "W", zero.policy = TRUE)
 
 class(ap)
@@ -103,28 +102,44 @@ str(ap)
 plot(target, col = 'cadetblue2', border = 'deepskyblue4', lwd = 2)
 plot(ap, xy, col = 'red', lwd = 2, add = TRUE)
 
-# using bamlss library
+# using the bamlss library
 nm <- neighbormatrix(target)
 print(nm)
 plotneighbors(target)
 plotneighbors(target, type = "delaunay")
 plotneighbors(target, type = "dist", d1 = 0, d2 = 0.15)
 
-# Global Autocorrelation Tests: Moran's I
-moran.test(target$AREA, listw = lw, zero.policy = T)
-moran.test(target$INDICE94, listw = lw, zero.policy = T)
-moran.test(target$INDICE95, listw = lw, zero.policy = T)
-moran.test(target$GINI_91, listw = lw, zero.policy = T)
-moran.test(target$POP_94, listw = lw, zero.policy = T)
-moran.test(as.numeric(target$POP_RUR), listw = lw, zero.policy = T)
-moran.test(as.numeric(target$POP_URB), listw = lw, zero.policy = T)
-moran.test(as.numeric(target$POP_FEM), listw = lw, zero.policy = T)
-moran.test(as.numeric(target$POP_MAS), listw = lw, zero.policy = T)
-moran.test(target$POP_TOT, listw = lw, zero.policy = T)
-moran.test(target$URBLEVEL, listw = lw, zero.policy = T)
-moran.test(target$PIB_PC, listw = lw, zero.policy = T)
+# global autocorrelation tests: Moran's I
+moran.test.AREA     <- moran.test(target$AREA, listw = lw, zero.policy = T) 
+moran.test.INDICE94 <- moran.test(target$INDICE94, listw = lw, zero.policy = T)
+moran.test.INDICE95 <- moran.test(target$INDICE95, listw = lw, zero.policy = T)
+moran.test.GINI_91  <- moran.test(target$GINI_91, listw = lw, zero.policy = T)
+moran.test.POP_94   <- moran.test(target$POP_94, listw = lw, zero.policy = T)
+moran.test.POP_RUR  <- moran.test(as.numeric(target$POP_RUR), listw = lw, zero.policy = T)
+moran.test.POP_URB  <- moran.test(as.numeric(target$POP_URB), listw = lw, zero.policy = T)
+moran.test.POP_FEM  <- moran.test(as.numeric(target$POP_FEM), listw = lw, zero.policy = T)
+moran.test.POP_MAS  <- moran.test(as.numeric(target$POP_MAS), listw = lw, zero.policy = T)
+moran.test.POP_TOT  <- moran.test(target$POP_TOT, listw = lw, zero.policy = T)
+moran.test.URBLEVEL <- moran.test(target$URBLEVEL, listw = lw, zero.policy = T)
+moran.test.PIB_PC   <- moran.test(target$PIB_PC, listw = lw, zero.policy = T)
 
-# Moran Scatterplot
+meudataframe <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
+                      t(data.frame("INDICE94" = moran.test.INDICE94$estimate)),
+                      t(data.frame("INDICE95" = moran.test.INDICE95$estimate)),
+                      t(data.frame("GINI_91" = moran.test.GINI_91$estimate)),
+                      t(data.frame("POP_94" = moran.test.POP_94$estimate)),
+                      t(data.frame("POP_RUR" = moran.test.POP_RUR$estimate)),
+                      t(data.frame("POP_URB" = moran.test.POP_URB$estimate)),
+                      t(data.frame("POP_FEM" = moran.test.POP_FEM$estimate)),
+                      t(data.frame("POP_MAS" = moran.test.POP_MAS$estimate)),
+                      t(data.frame("POP_TOT" = moran.test.POP_TOT$estimate)),
+                      t(data.frame("URBLEVEL" = moran.test.URBLEVEL$estimate)),
+                      t(data.frame("PIB_PC" = moran.test.PIB_PC$estimate)))
+meudataframe
+
+
+
+# Moran scatterplot
 par(mar=c(4,4,1.5,0.5))
 moran.plot(target$AREA, 
            listw = lw, 
