@@ -23,6 +23,12 @@ library(sp)
 library(spdep)
 library(bamlss)
 library(shapefiles)
+library(gstat)
+library(splancs)
+library(spatstat)
+library(pgirmess)
+library(classInt)
+library(spgwr)
 
 # libraries for plots and visualization
 library(RColorBrewer)
@@ -92,7 +98,7 @@ xy <- coordinates(target) # getting the centroids of the polygons
 # neighborhood matrix from spatial polygons / adjacent polygons
 
 # using the spdep library
-ap <- poly2nb(target, queen=T)
+ap <- poly2nb(target, queen = T)
 lw <- nb2listw(ap, style = "W", zero.policy = TRUE)
 
 class(ap)
@@ -138,7 +144,7 @@ moran.test.all <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
 
 print(moran.test.all)
 
-# Moran scatterplot
+# Moran scatterplot for AREA
 par(mar=c(4,4,1.5,0.5))
 moran.plot(target$AREA, 
            listw = lw, 
@@ -153,6 +159,32 @@ moran.plot(target$AREA,
            xlab = "Percent for Area",
            ylab = "Percent for Area (Spatial Lag)", 
            main = "Moran Scatterplot")
+
+# LISA map for AREA
+locm <- localmoran(target$AREA, lw)
+
+target$sPPOV <- scale(target$AREA)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+
+plot(x = target$sPPOV, y = target$lag_sPPOV, main = " Moran Scatterplot PPOV")
+abline(h = 0, v = 0)
+abline(lm(target$lag_sPPOV ~ target$sPPOV), lty = 3, lwd = 4, col = "red")
+identify(target$sPPOV, target$lag_sPPOV, target$AREA, cex = 0.8)
+
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("high-High", "low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$AREA, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+plot(target, col = colors[np])
+mtext("Local Moran's I", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
 
 # Pergunta 2 ------------------------------------------------------------------
 # Implemente o modelo espacial auto-regressivo (SAR) da variável Indice95 
