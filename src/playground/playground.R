@@ -16,13 +16,16 @@ library(dplyr)
 
 
 # libraries for spatial data manipulation
-library(rgdal)
+library(maps)
+library(maptools)     
 library(raster)
+library(sp)  
 library(spdep)
 library(bamlss)
 library(shapefiles)
 
-# libraries for plots
+# libraries for plots and visualization
+library(RColorBrewer)
 # library(ggplot2)
 # library(ggthemes)
 # library(ggcorrplot)
@@ -52,9 +55,9 @@ source("./src/datapreparation/step_00_config_environment.R")
 source("./src/datapreparation/step_01_create_functions.R")
 source("./src/datapreparation/step_02_data_ingestion.R")
 source("./src/datapreparation/step_03_data_cleaning.R")
-# source("./src/datapreparation/step_04_label_translation.R")
-# source("./src/datapreparation/step_05_data_enhancement.R")
-#source("./src/datapreparation/step_06_dataset_preparation.R")
+source("./src/datapreparation/step_04_label_translation.R")
+source("./src/datapreparation/step_05_data_enhancement.R")
+source("./src/datapreparation/step_06_dataset_preparation.R")
 
 
 # doing some spatial exploratory analysis -------------------------------------
