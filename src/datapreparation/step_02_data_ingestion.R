@@ -2,4 +2,4 @@
 dataRawDirectory <- "./data/raw/"
 shapefile_to_read <- paste(dataRawDirectory, "crime_mg.shp", sep = "")
 
-target <- shapefile(shapefile_to_read)
+target <- readOGR(shapefile_to_read, encoding="UTF-8")
