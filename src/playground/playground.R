@@ -169,6 +169,8 @@ target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
 plot(x = target$sPPOV, y = target$lag_sPPOV, main = " Moran Scatterplot PPOV")
 abline(h = 0, v = 0)
 abline(lm(target$lag_sPPOV ~ target$sPPOV), lty = 3, lwd = 4, col = "red")
+
+# check out the outliers click on one or two and then hit escape (or click finish)
 identify(target$sPPOV, target$lag_sPPOV, target$AREA, cex = 0.8)
 
 target$quad_sig <- NA
@@ -180,7 +182,7 @@ target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "
 
 breaks <- seq(1, 5, 1)
 labels <- c("high-High", "low-Low", "High-Low", "Low-High", "Not Signif.")
-np <- findInterval(target$AREA, breaks)
+np <- findInterval(target$quad_sig, breaks)
 colors <- c("red", "blue", "lightpink", "skyblue2", "white")
 plot(target, col = colors[np])
 mtext("Local Moran's I", cex = 1.5, side = 3, line = 1)
