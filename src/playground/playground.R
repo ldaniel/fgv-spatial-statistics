@@ -148,7 +148,7 @@ print(moran.test.all)
 
 # Moran scatterplot for AREA
 # TO-DO: entender o porquê do plot não ser gerado
-par(mar=c(4,4,1.5,0.5))
+par(mar = c(4,4,1.5,0.5))
 moran.plot(target$AREA, 
            listw = lw, 
            zero.policy = T,
@@ -198,10 +198,11 @@ legend("topleft", legend = labels, fill = colors, bty = "n")
 # Y_coord). Apresente o resultado da regressão linear simples e da regressão 
 # linear espacial. Apresente as equações e interprete seus coeficientes.
 
+# initial setup
 res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
                                 space = "rgb")
 pal <- res.palette(5)
-par(mar=rep(0,4))
+par(mar = rep(1, 4))
 
 # linear regresion model
 target.lm.model <- lm(INDICE95 ~ AREA, data = target)
@@ -217,14 +218,14 @@ target.lm.model.class_fx <- classIntervals(target.lm.model.residuals,
 
 cols.lm <- findColours(target.lm.model.class_fx, pal)
 
-plot(target, col = cols.lm, main = "Residuals from OLS Model", border = "grey")
+plot(target, col = cols.lm, main = "OLS Model", border = "grey")
 legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
        legend = names(attr(cols, "table")), title = "Residuals from OLS Model",
        ncol = 5)
 
 moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
 
-# SAR model
+# SAR model (standard spatial econometrics model)
 target.sar.model <- lagsarlm(INDICE95 ~ AREA, 
                              data = target, 
                              listw = lw,
@@ -242,7 +243,7 @@ target.sar.model.class_fx <- classIntervals(target.sar.model.residuals,
 
 cols.sar <- findColours(target.sar.model.class_fx, pal)
 
-plot(target, col = cols.sar, border = "grey")
+plot(target, col = cols.sar, main = "SAR Model", border = "grey")
 legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
        legend = names(attr(cols, "table")), title = "Residuals from SAR Model",
        ncol = 5)
