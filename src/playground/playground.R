@@ -145,6 +145,7 @@ moran.test.all <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
 print(moran.test.all)
 
 # Moran scatterplot for AREA
+# TO-DO: entender o porquê do plot não ser gerado
 par(mar=c(4,4,1.5,0.5))
 moran.plot(target$AREA, 
            listw = lw, 
@@ -170,7 +171,7 @@ plot(x = target$sPPOV, y = target$lag_sPPOV, main = " Moran Scatterplot PPOV")
 abline(h = 0, v = 0)
 abline(lm(target$lag_sPPOV ~ target$sPPOV), lty = 3, lwd = 4, col = "red")
 
-# check out the outliers click on one or two and then hit escape (or click finish)
+# check out the outliers click on one or two and then hit escape or click finish
 identify(target$sPPOV, target$lag_sPPOV, target$AREA, cex = 0.8)
 
 target$quad_sig <- NA
@@ -233,4 +234,4 @@ legend("topleft", legend = labels, fill = colors, bty = "n")
 # using tmap for high quality maps
 tmap_mode("view")
 tm_shape(target) +
-  tm_polygons("INDICE95") 
+  tm_polygons("INDICE95")
