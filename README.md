@@ -6,7 +6,7 @@ In this project, we developed a set of models and analysis for a given Minas Ger
 
 This website intends to present the work analysis for the *"Spatial Statistics"* class.
 
-See the final website report at: [https://ldaniel.github.io/Spatial-Statistics](https://ldaniel.github.io/Spatial-Statistics).
+:octocat: See the final website report at: [https://ldaniel.github.io/Spatial-Statistics](https://ldaniel.github.io/Spatial-Statistics).
 
 ## Professor
 - Eduardo de Rezende Francisco
