@@ -4,7 +4,7 @@
 # predictive modeling.
 
 # defining the final dataset to evaluate
-source_dataset <- mytable
+#source_dataset <- mytable
 
 # calling function to split and create train and test databases
 # this function will split the dataset into train and test data and save the sampling in disk
