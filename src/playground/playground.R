@@ -147,7 +147,6 @@ moran.test.all <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
 print(moran.test.all)
 
 # Moran scatterplot for AREA
-# TO-DO: entender o porquê do plot não ser gerado
 par(mar = c(4,4,1.5,0.5))
 moran.plot(target$AREA, 
            listw = lw, 
