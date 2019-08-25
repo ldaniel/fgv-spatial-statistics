@@ -7,7 +7,8 @@ invisible(gc())
 cat("\014")
 
 # clear plots
-dev.off()
+while (!is.null(dev.list()))  
+  dev.off()
 
 # setting the environment -----------------------------------------------------
 options(encoding = "UTF-8")
