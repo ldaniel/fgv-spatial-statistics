@@ -14,4 +14,4 @@ mytable_empty_cols <-  sapply(target@data, function(x) table(as.character(x) == 
 
 # TO-DO: tratar as colunas com valor zero
 
-
+target$POP_RUR <- as.numeric(as.character(target@POP_RUR))
