@@ -80,10 +80,17 @@ names(target)
 # X_COORD
 # Y_COORD 
 
+# Pergunta 1 ------------------------------------------------------------------
+# Qual das variáveis quantitativas apresentadas no shapefile crime_mg apresenta 
+# maior auto-correlação espacial? Descreva como implementou a matriz de 
+# vizinhança. Apresente o I de Moran e o mapa de auto-correlação espacial local 
+# (LISA map) da variável escolhida e também de pelo menos outras 3 variáveis.
+# Obs: desconsidere as variáveis Codmuni, ID, X_coord e Y_coord nessa análise.
+
 # getting the centroids of the polygons
 xy <- coordinates(target) # getting the centroids of the polygons
 
-# neighborhood matrix from spatial polygons / adjacent polygons ---------------
+# neighborhood matrix from spatial polygons / adjacent polygons
 
 # using spdep library
 ap <- poly2nb(target, row.names = target$ID)
@@ -133,7 +140,49 @@ moran.plot(target$AREA,
            ylab = "Percent for Area (Spatial Lag)", 
            main = "Moran Scatterplot")
 
-# using tmap for high quality maps --------------------------------------------
+# Pergunta 2 ------------------------------------------------------------------
+# Implemente o modelo espacial auto-regressivo (SAR) da variável Indice95 
+# (índice de criminalidade em 1995 de Minas Gerais) a partir de apenas uma 
+# variável independente (não pode ser Indice94, Codmuni, ID, X_coord nem 
+# Y_coord). Apresente o resultado da regressão linear simples e da regressão 
+# linear espacial. Apresente as equações e interprete seus coeficientes.
+
+# Pergunta 3 ------------------------------------------------------------------
+# Para essa variável que você escolheu, o modelo espacial SAR apresentou ganhos 
+# significantes com relação ao modelo linear simples? Justifique sua resposta.
+# Obs: Sugere-se fazer essa atividade no GeoDA ou no R.
+
+# Pergunta 4 ------------------------------------------------------------------
+# Implemente a regressão espacial GWR da variável Indice95 (índice de 
+# criminalidade em 1995 de Minas Gerais) a partir de apenas uma variável 
+# independente (não pode ser Indice94, Codmuni, ID, X_coord nem Y_coord). 
+# Apresente o resultado da regressão linear simples e da regressão linear 
+# espacial por GWR. Apresente medidas da distribuição dos coeficientes 
+# (min, Q1, Q2, Q3, máx), e da distribuição do R2 (min, Q1, Q2, Q3, máx) e 
+# apresente os resultados globais da regressão (R2 global, basicamente).
+# Obs: Sugere-se fazer essa atividade no ArcGIS ou no R.
+
+# Pergunta 5 ------------------------------------------------------------------
+# Para essa variável que você escolheu, o modelo espacial GWR apresentou ganhos 
+# significantes com relação ao modelo linear simples? Justifique sua resposta.
+
+# Pergunta 6 ------------------------------------------------------------------
+# Implemente um modelo de regressão linear multivariado stepwise da variável 
+# Indice95 (significante a 5% ou 10%, utilize o que achar melhor). Depois, 
+# “promova-o” a um modelo SAR. Apresente os resultados comparados (equação, 
+# R2). Qual modelo você escolheria como final? Se desejar, apresente mapas 
+# que sustente sua justificativa.
+
+# Pergunta 7 (bônus) ----------------------------------------------------------
+# Promova o modelo final linear da Pergunta 6 a um modelo GWR. Apresente os 
+# resultados comparados (equação, R2). Qual modelo você escolheria como final? 
+# Se desejar, apresente mapas que sustente sua justificativa.
+
+# Pergunta 8 (bônus 2) ----------------------------------------------------------
+# Produza um mapa de alta qualidade do shapefile crime_mg utilizando a extensão 
+# tmap. Apresente o código completo e o mapa produzido em sua resposta.
+
+# using tmap for high quality maps
 tmap_mode("view")
 tm_shape(target) +
   tm_polygons("INDICE95") 
