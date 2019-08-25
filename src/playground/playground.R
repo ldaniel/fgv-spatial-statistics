@@ -85,6 +85,8 @@ names(target)
 # X_COORD
 # Y_COORD 
 
+#TO-DO: Checar porque está faltando os polígonos de Juramento e Jesuânia
+
 # Pergunta 1 ------------------------------------------------------------------
 # Qual das variáveis quantitativas apresentadas no shapefile crime_mg apresenta 
 # maior auto-correlação espacial? Descreva como implementou a matriz de 
@@ -234,4 +236,4 @@ legend("topleft", legend = labels, fill = colors, bty = "n")
 # using tmap for high quality maps
 tmap_mode("view")
 tm_shape(target) +
-  tm_polygons("INDICE95")
+  tm_polygons("INDICE95", id = "MUNIC")
