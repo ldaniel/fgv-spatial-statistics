@@ -12,6 +12,7 @@ date: "September, 2019"
 ### Books and articles
 
 - [**Spatial autocorrelation**](https://rspatial.org/analysis/3-spauto.html) --Created by the GFC for the Innovation Lab for Collaborative Research on Sustainable Intensification  
+- [**Autocorrelação espacial e correlogramas no R**](http://rstudio-pubs-static.s3.amazonaws.com/268058_dd37b98f25a4496b9f0a7eb2fcf892cd.html) --Melina de Souza Leite  
 
 ### Wikipedia
 
