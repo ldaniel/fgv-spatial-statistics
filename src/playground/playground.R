@@ -2,15 +2,8 @@
 # FGVR library for data science power-ups
 # library(fgvr)
 
-# libraries for spatial data manipulation
-library(rgdal)
-library(raster)
-library(spdep)
-library(bamlss)
-library(shapefiles)
-
 # libraries for data prep
-# library(dplyr)
+library(dplyr)
 # library(readr)
 # library(magrittr)
 # library(forcats)
@@ -21,7 +14,15 @@ library(shapefiles)
 # library(reshape2)
 # library(knitr)
 
-# ibraries for plots
+
+# libraries for spatial data manipulation
+library(rgdal)
+library(raster)
+library(spdep)
+library(bamlss)
+library(shapefiles)
+
+# libraries for plots
 # library(ggplot2)
 # library(ggthemes)
 # library(ggcorrplot)
@@ -59,6 +60,21 @@ source("./src/datapreparation/step_03_data_cleaning.R")
 # doing some spatial exploratory analysis -------------------------------------
 View(target)
 plot(target)
+names(target)
+# AREA
+# INDICE94
+# INDICE95
+# GINI_91
+# POP_94
+# POP_RUR
+# POP_URB
+# POP_FEM
+# POP_MAS
+# POP_TOT
+# URBLEVEL
+# PIB_PC
+# X_COORD
+# Y_COORD 
 
 # getting the centroids of the polygons
 xy <- coordinates(target) # getting the centroids of the polygons
@@ -67,6 +83,8 @@ xy <- coordinates(target) # getting the centroids of the polygons
 
 # using spdep library
 ap <- poly2nb(target, row.names = target$ID)
+lw <- nb2listw(ap, style = "W", zero.policy = TRUE)
+
 class(ap)
 summary(ap)
 str(ap)
@@ -80,3 +98,19 @@ print(nm)
 plotneighbors(target)
 plotneighbors(target, type = "delaunay")
 plotneighbors(target, type = "dist", d1 = 0, d2 = 0.15)
+
+# Global Autocorrelation Tests: Moran's I
+moran.test(target$AREA, listw = lw, zero.policy = T)
+moran.test(target$INDICE94, listw = lw, zero.policy = T)
+moran.test(target$INDICE95, listw = lw, zero.policy = T)
+moran.test(target$GINI_91, listw = lw, zero.policy = T)
+moran.test(target$POP_94, listw = lw, zero.policy = T)
+moran.test(as.numeric(target$POP_RUR), listw = lw, zero.policy = T)
+moran.test(as.numeric(target$POP_URB), listw = lw, zero.policy = T)
+moran.test(as.numeric(target$POP_FEM), listw = lw, zero.policy = T)
+moran.test(as.numeric(target$POP_MAS), listw = lw, zero.policy = T)
+moran.test(target$POP_TOT, listw = lw, zero.policy = T)
+moran.test(target$URBLEVEL, listw = lw, zero.policy = T)
+moran.test(target$PIB_PC, listw = lw, zero.policy = T)
+
+
