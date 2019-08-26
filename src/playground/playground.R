@@ -95,7 +95,7 @@ names(target)
 # Obs: desconsidere as variáveis Codmuni, ID, X_coord e Y_coord nessa análise.
 
 # getting the centroids of the polygons
-xy <- coordinates(target) # getting the centroids of the polygons
+xy <- coordinates(target) 
 
 # neighborhood matrix from spatial polygons / adjacent polygons
 
