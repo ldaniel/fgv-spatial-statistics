@@ -8,7 +8,7 @@ library(dplyr)
 # library(magrittr)
 # library(forcats)
 # library(lubridate)
-# library(stringr)
+library(stringr)
 # library(feather)
 # library(fastDummies)
 # library(reshape2)
@@ -107,7 +107,7 @@ class(ap)
 summary(ap)
 str(ap)
 
-plot(target, col = 'cadetblue2', border = 'deepskyblue4', lwd = 2)
+plot(target, col = 'cadetblue2', border = 'deepskyblue4', lwd = 1)
 plot(ap, xy, col = 'red', lwd = 2, add = TRUE)
 
 # using the bamlss library
@@ -184,6 +184,7 @@ breaks <- seq(1, 5, 1)
 labels <- c("high-High", "low-Low", "High-Low", "Low-High", "Not Signif.")
 np <- findInterval(target$quad_sig, breaks)
 colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
 plot(target, col = colors[np])
 mtext("Local Moran's I", cex = 1.5, side = 3, line = 1)
 legend("topleft", legend = labels, fill = colors, bty = "n")
@@ -199,7 +200,7 @@ legend("topleft", legend = labels, fill = colors, bty = "n")
 res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
                                 space = "rgb")
 pal <- res.palette(5)
-par(mar = rep(1, 4))
+par(mar = c(2, 0, 4, 0))
 
 # linear regresion model
 target.lm.model <- lm(INDICE95 ~ AREA, data = target)
@@ -286,3 +287,4 @@ moran.test(target.sar.model.residuals, listw = lw, zero.policy = T)
 tmap_mode("view")
 tm_shape(target) +
   tm_polygons("INDICE95", id = "MUNIC")
+
