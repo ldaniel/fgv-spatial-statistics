@@ -13,9 +13,12 @@ while (!is.null(dev.list()))
 # setting the environment -----------------------------------------------------
 options(encoding = "UTF-8")
 
-username <- Sys.info()[["user"]]
-directoryPath <- dirname(rstudioapi::getSourceEditorContext()$path)
-directoryPath <- stringr::str_replace(directoryPath, "/src/playground", "")
+info.username  <- Sys.info()[["user"]]
+info.sysname   <- Sys.info()[["sysname"]]
+info.machine   <- Sys.info()[["machine"]]
+info.encoding  <- getOption("encoding")
+directoryPath  <- dirname(rstudioapi::getSourceEditorContext()$path)
+directoryPath  <- stringr::str_replace(directoryPath, "/src/playground", "")
 
 setwd(directoryPath)
 getwd()
