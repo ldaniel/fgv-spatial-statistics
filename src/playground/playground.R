@@ -283,8 +283,22 @@ moran.test(target.sar.model.residuals, listw = lw, zero.policy = T)
 # Produza um mapa de alta qualidade do shapefile crime_mg utilizando a extensão 
 # tmap. Apresente o código completo e o mapa produzido em sua resposta.
 
-# using tmap for high quality maps
+# interactive map
 tmap_mode("view")
 tm_shape(target) +
-  tm_polygons("INDICE95", id = "MUNIC")
+  tm_polygons("INDICE95", 
+              id = "MUNIC", 
+              title = "indice 1995", 
+              contrast = 0.7,
+              palette = "-Blues",
+              border.col = "gray30") +
+  tm_format("World") 
+
+# classic map
+tmap_mode("plot")
+tm_shape(target) +
+  tm_polygons("INDICE95", id = "MUNIC") +
+  tm_compass(position = c(.1, .1), color.light = "grey90") +
+  tm_credits("Eckert IV projection", position = c("RIGHT", "BOTTOM")) +
+  tm_style("classic")
 
