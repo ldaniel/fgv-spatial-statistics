@@ -223,7 +223,7 @@ legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
 
 moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
 
-# SAR model (standard spatial econometrics model)
+# SAR model (Spatial Auto-Regressive model)
 target.sar.model <- lagsarlm(INDICE95 ~ AREA, 
                              data = target, 
                              listw = lw,
