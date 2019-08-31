@@ -283,10 +283,10 @@ cols.gwr.residuals <- findColours(target.gwr.residuals.classes_fx, pal)
 
 plot(target, col = cols.gwr.residuals, main = "GWR Model (residuals)", border = "grey")
 legend(x = "bottom", cex = 1, fill = attr(cols.gwr.residuals,"palette"), bty = "n",
-       legend = names(attr(cols.gwr.residuals, "table")), title = "Residuals from GWR Model",
-       ncol = 5)
+       legend = names(attr(cols.gwr.residuals, "table")), 
+       title = "Residuals from GWR Model", ncol = 5)
 
-moran.test(res.gwr, listw = lw, zero.policy = T)
+moran.test(target.gwr.residuals, listw = lw, zero.policy = T)
 
 
 # coefficients
@@ -301,6 +301,8 @@ plot(target, col = cols.gwr.coefficients, main = "GWR Model (coefficients)", bor
 legend(x = "bottom", cex = 1, fill = attr(cols.gwr.coefficients,"palette"), bty = "n",
        legend = names(attr(cols.gwr.coefficients, "table")),
        title = "Local Coefficient Estimates (area)", ncol = 3)
+
+moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 
 # Pergunta 5 ------------------------------------------------------------------
 # Para essa variável que você escolheu, o modelo espacial GWR apresentou ganhos 
