@@ -70,6 +70,8 @@ source("./src/datapreparation/step_06_dataset_preparation.R")
 View(target)
 plot(target)
 names(target)
+
+# the variables ---------------------------------------------------------------
 # AREA
 # INDICE94
 # INDICE95
