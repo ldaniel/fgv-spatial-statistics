@@ -56,3 +56,14 @@ spplot(target, "fitted_sem", main = "Trend")
 
 target$resid_sem <- target.errorsar.model$residuals
 spplot(target, "resid_sem", main = "Residuals")
+
+
+# -----------------------------------------------------------------------------
+
+library(spselect)
+
+data(y)
+data(X.3D)
+y.name <- "y"
+ss <- c("ind", "ss1", "ss2")
+mod_forward.step.ss_1 <- stepwise.ss(y, X.3D, y.name, ss, 1, verbose = T)
