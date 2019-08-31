@@ -33,7 +33,7 @@ library(spgwr)
 # libraries for plots and visualization
 library(RColorBrewer)
 library(tmap)
-# library(ggplot2)
+library(ggplot2)
 # library(ggthemes)
 # library(ggcorrplot)
 # library(ggpubr)
@@ -178,7 +178,7 @@ target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "
 target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
 target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
 target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
-target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 5 
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
 
 breaks <- seq(1, 5, 1)
 labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
