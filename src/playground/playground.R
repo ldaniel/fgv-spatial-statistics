@@ -263,6 +263,45 @@ moran.test(target.sar.model.residuals, listw = lw, zero.policy = T)
 # apresente os resultados globais da regressão (R2 global, basicamente).
 # Obs: Sugere-se fazer essa atividade no ArcGIS ou no R.
 
+# initial setup
+res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
+                                space = "rgb")
+pal <- res.palette(5)
+par(mar = c(2, 0, 4, 0))
+
+# GWR model ()
+target.gwr.sel <- gwr.sel(INDICE95 ~ AREA, data = target, gweight = gwr.Gauss, verbose = F)
+target.gwr.model <- gwr(INDICE95 ~ AREA, data = target, bandwidth = target.gwr.sel, gweight = gwr.Gauss)
+
+# residuals
+target.gwr.residuals <- target.gwr.model$SDF$gwr.e
+
+target.gwr.residuals.classes_fx <- classIntervals(target.gwr.residuals, n = 5, style = "fixed", 
+                                                  fixedBreaks = c(-50,-25,-5,5,25,50), 
+                                                  rtimes = 1)
+cols.gwr.residuals <- findColours(target.gwr.residuals.classes_fx, pal)
+
+plot(target, col = cols.gwr.residuals, main = "GWR Model (residuals)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.residuals,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.residuals, "table")), title = "Residuals from GWR Model",
+       ncol = 5)
+
+moran.test(res.gwr, listw = lw, zero.policy = T)
+
+
+# coefficients
+target.gwr.coefficients <- target.gwr.model$SDF$AREA
+
+target.gwr.coefficients.classes_fx <- classIntervals(target.gwr.coefficients, n = 5, style="fixed", 
+                                                     fixedBreaks=c(-.005,-.003,-.001,.001,.003,.005), 
+                                                     rtimes = 1)
+cols.gwr.coefficients <- findColours(target.gwr.coefficients.classes_fx, pal)
+
+plot(target, col = cols.gwr.coefficients, main = "GWR Model (coefficients)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.coefficients,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.coefficients, "table")),
+       title = "Local Coefficient Estimates (area)", ncol = 3)
+
 # Pergunta 5 ------------------------------------------------------------------
 # Para essa variável que você escolheu, o modelo espacial GWR apresentou ganhos 
 # significantes com relação ao modelo linear simples? Justifique sua resposta.
