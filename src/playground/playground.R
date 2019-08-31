@@ -181,7 +181,7 @@ target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "
 target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 5 
 
 breaks <- seq(1, 5, 1)
-labels <- c("high-High", "low-Low", "High-Low", "Low-High", "Not Signif.")
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
 np <- findInterval(target$quad_sig, breaks)
 colors <- c("red", "blue", "lightpink", "skyblue2", "white")
 par(mar = c(4,0,4,1))
