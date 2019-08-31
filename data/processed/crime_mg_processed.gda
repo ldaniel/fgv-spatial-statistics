@@ -73,12 +73,10 @@
                     <title>crime_mg_processed</title>
                     <default/>
                     <meta_info>
-                        <weights_type>queen</weights_type>
-                        <order>1</order>
-                        <inc_lower_orders>false</inc_lower_orders>
+                        <weights_type>custom</weights_type>
                         <path>crime_mg_processed.gal</path>
                         <id_variable>ID</id_variable>
-                        <symmetry>symmetric</symmetry>
+                        <symmetry>unknown</symmetry>
                         <num_observations>754</num_observations>
                         <min_neighbors>1</min_neighbors>
                         <max_neighbors>16</max_neighbors>
