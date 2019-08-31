@@ -225,7 +225,7 @@ legend(x = "bottom", cex = 1, fill = attr(cols.lm, "palette"), bty = "n",
 
 moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
 
-# SAR model (Spatial Auto-Regressive model)
+# SAR model (Spatial Auto-Regressive)
 target.sar.model <- lagsarlm(INDICE95 ~ AREA, 
                              data = target, 
                              listw = lw,
@@ -271,7 +271,7 @@ res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"),
 pal <- res.palette(5)
 par(mar = c(2, 0, 4, 0))
 
-# GWR model ()
+# GWR model (Geographically Weighted Regression)
 target.gwr.sel <- gwr.sel(INDICE95 ~ AREA, data = target, gweight = gwr.Gauss, verbose = F)
 target.gwr.model <- gwr(INDICE95 ~ AREA, data = target, bandwidth = target.gwr.sel, gweight = gwr.Gauss)
 
