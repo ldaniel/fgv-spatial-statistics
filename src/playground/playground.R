@@ -217,8 +217,8 @@ target.lm.model.class_fx <- classIntervals(target.lm.model.residuals,
 cols.lm <- findColours(target.lm.model.class_fx, pal)
 
 plot(target, col = cols.lm, main = "OLS Model", border = "grey")
-legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
-       legend = names(attr(cols, "table")), title = "Residuals from OLS Model",
+legend(x = "bottom", cex = 1, fill = attr(cols.lm, "palette"), bty = "n",
+       legend = names(attr(cols.lm, "table")), title = "Residuals from OLS Model",
        ncol = 5)
 
 moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
@@ -242,8 +242,8 @@ target.sar.model.class_fx <- classIntervals(target.sar.model.residuals,
 cols.sar <- findColours(target.sar.model.class_fx, pal)
 
 plot(target, col = cols.sar, main = "SAR Model", border = "grey")
-legend(x = "bottom", cex = 1, fill = attr(cols, "palette"), bty = "n",
-       legend = names(attr(cols, "table")), title = "Residuals from SAR Model",
+legend(x = "bottom", cex = 1, fill = attr(cols.sar, "palette"), bty = "n",
+       legend = names(attr(cols.sar, "table")), title = "Residuals from SAR Model",
        ncol = 5)
 
 moran.test(target.sar.model.residuals, listw = lw, zero.policy = T)
