@@ -34,6 +34,7 @@ library(spgwr)
 library(RColorBrewer)
 library(tmap)
 library(ggplot2)
+library(ggExtra)
 # library(ggthemes)
 # library(ggcorrplot)
 # library(ggpubr)
@@ -316,6 +317,63 @@ moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 # “promova-o” a um modelo SAR. Apresente os resultados comparados (equação, 
 # R2). Qual modelo você escolheria como final? Se desejar, apresente mapas 
 # que sustente sua justificativa.
+
+# initial exploration in INDICE95 x AREA
+indice95_by_urblevel_plot <- ggplot(data = target@data, 
+                                    aes(x = target$INDICE95, 
+                                        y = target$AREA, 
+                                        color = target$URBLEVEL)) +
+  geom_point() +
+  theme(legend.position = "none") +
+  xlab("INDICE95") +
+  ylab("AREA")
+
+ggMarginal(indice95_by_urblevel_plot, type = "histogram")
+
+# runing the linear model multivaluated and looking at the residuals
+target.ols.model <- lm(INDICE95 ~ 
+                         AREA + 
+                         INDICE94 + 
+                         GINI_91 +
+                         POP_94 +
+                         POP_RUR +
+                         POP_URB +
+                         POP_FEM +
+                         POP_MAS +
+                         POP_TOT +
+                         URBLEVEL +
+                         PIB_PC, 
+                       data = target)
+
+summary(target.ols.model)
+
+target$resid <- residuals(target.ols.model)
+spplot(target, "resid", main = "Residuals")
+
+# runing the error SAR model and looking at the error terms
+target.errorsar.model <- errorsarlm(formula =INDICE95 ~ 
+                                       AREA + 
+                                       INDICE94 + 
+                                       GINI_91 +
+                                       POP_94 +
+                                       POP_RUR +
+                                       POP_URB +
+                                       POP_FEM +
+                                       POP_MAS +
+                                       POP_TOT +
+                                       URBLEVEL +
+                                       PIB_PC, 
+                                     data = target,
+                                     listw = lw, 
+                                     quiet = T)
+
+summary(target.errorsar.model)
+
+target$fitted_sem <- target.errorsar.model$fitted.values
+spplot(target, "fitted_sem", main = "Trend")
+
+target$resid_sem <- target.errorsar.model$residuals
+spplot(target, "resid_sem", main = "Residuals")
 
 # Pergunta 7 (bônus) ----------------------------------------------------------
 # Promova o modelo final linear da Pergunta 6 a um modelo GWR. Apresente os 
