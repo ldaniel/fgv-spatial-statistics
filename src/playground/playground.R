@@ -48,7 +48,7 @@ library(ggExtra)
 # libraries for modeling
 # library(caret)
 # library(gmodels)
-# library(MASS)
+library(MASS)
 # library(rpart)
 # library(rpart.plot)
 # library(adabag)
@@ -375,10 +375,71 @@ spplot(target, "fitted_sem", main = "Trend")
 target$resid_sem <- target.errorsar.model$residuals
 spplot(target, "resid_sem", main = "Residuals")
 
+# performing the stepwise selection
+target.errorsar.model.stepwise <- step(target.ols.model, direction = "both", test = "F")
+
+names(target.errorsar.model.stepwise$coefficients) <- 
+  stringr::str_sub(names(target.errorsar.model.stepwise$coefficients), 1, 25)
+summary(target.errorsar.model.stepwise)
+
 # Pergunta 7 (bônus) ----------------------------------------------------------
 # Promova o modelo final linear da Pergunta 6 a um modelo GWR. Apresente os 
 # resultados comparados (equação, R2). Qual modelo você escolheria como final? 
 # Se desejar, apresente mapas que sustente sua justificativa.
+
+
+# initial setup
+res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
+                                space = "rgb")
+pal <- res.palette(5)
+par(mar = c(2, 0, 4, 0))
+
+# GWR model (Geographically Weighted Regression)
+target.gwr.sel <- gwr.sel(INDICE95 ~ 
+                            INDICE94 +
+                            GINI_91 + 
+                            URBLEVEL, 
+                          data = target, 
+                          gweight = gwr.Gauss, 
+                          verbose = F)
+target.gwr.model <- gwr(INDICE95 ~ 
+                          INDICE94 +
+                          GINI_91 + 
+                          URBLEVEL, 
+                        data = target, 
+                        bandwidth = target.gwr.sel, 
+                        gweight = gwr.Gauss)
+
+# residuals
+target.gwr.residuals <- target.gwr.model$SDF$gwr.e
+
+target.gwr.residuals.classes_fx <- classIntervals(target.gwr.residuals, n = 5, style = "fixed", 
+                                                  fixedBreaks = c(-50,-25,-5,5,25,50), 
+                                                  rtimes = 1)
+cols.gwr.residuals <- findColours(target.gwr.residuals.classes_fx, pal)
+
+plot(target, col = cols.gwr.residuals, main = "GWR Model (residuals)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.residuals,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.residuals, "table")), 
+       title = "Residuals from GWR Model", ncol = 5)
+
+moran.test(target.gwr.residuals, listw = lw, zero.policy = T)
+
+
+# coefficients
+target.gwr.coefficients <- target.gwr.model$SDF$URBLEVEL
+
+target.gwr.coefficients.classes_fx <- classIntervals(target.gwr.coefficients, n = 5, style="fixed", 
+                                                     fixedBreaks=c(-.005,-.003,-.001,.001,.003,.005), 
+                                                     rtimes = 1)
+cols.gwr.coefficients <- findColours(target.gwr.coefficients.classes_fx, pal)
+
+plot(target, col = cols.gwr.coefficients, main = "GWR Model (coefficients)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.coefficients,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.coefficients, "table")),
+       title = "Local Coefficient Estimates (urblevel)", ncol = 3)
+
+moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 
 # Pergunta 8 (bônus 2) --------------------------------------------------------
 # Produza um mapa de alta qualidade do shapefile crime_mg utilizando a extensão 
