@@ -387,7 +387,6 @@ summary(target.errorsar.model.stepwise)
 # resultados comparados (equação, R2). Qual modelo você escolheria como final? 
 # Se desejar, apresente mapas que sustente sua justificativa.
 
-
 # initial setup
 res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
                                 space = "rgb")
