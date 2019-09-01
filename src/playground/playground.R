@@ -48,7 +48,7 @@ library(ggExtra)
 # libraries for modeling
 # library(caret)
 # library(gmodels)
-# library(MASS)
+library(MASS)
 # library(rpart)
 # library(rpart.plot)
 # library(adabag)
@@ -374,6 +374,13 @@ spplot(target, "fitted_sem", main = "Trend")
 
 target$resid_sem <- target.errorsar.model$residuals
 spplot(target, "resid_sem", main = "Residuals")
+
+# performing the stepwise selection
+target.errorsar.model.stepwise <- step(target.ols.model, direction = "both", test = "F")
+
+names(target.errorsar.model.stepwise$coefficients) <- 
+  stringr::str_sub(names(target.errorsar.model.stepwise$coefficients), 1, 25)
+summary(target.errorsar.model.stepwise)
 
 # Pergunta 7 (bônus) ----------------------------------------------------------
 # Promova o modelo final linear da Pergunta 6 a um modelo GWR. Apresente os 
