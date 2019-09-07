@@ -196,7 +196,70 @@ np <- findInterval(target$quad_sig, breaks)
 colors <- c("red", "blue", "lightpink", "skyblue2", "white")
 par(mar = c(4,0,4,1))
 plot(target, col = colors[np])
-mtext("Local Moran's I", cex = 1.5, side = 3, line = 1)
+mtext("Local Moran's I - INDICE94", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+
+# LISA map for INDICE95 
+locm <- localmoran(target$INDICE95,lw)
+
+target$sPPOV <- scale(target$INDICE95)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - INDICE95", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+
+# LISA map for URBLEVEL 
+locm <- localmoran(target$URBLEVEL,lw)
+
+target$sPPOV <- scale(target$URBLEVEL)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - URBLEVEL", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+
+# LISA map for POPRUR 
+locm <- localmoran(target$POPRUR,lw)
+
+target$sPPOV <- scale(target$POPRUR)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - POPRUR", cex = 1.5, side = 3, line = 1)
 legend("topleft", legend = labels, fill = colors, bty = "n")
 
 # Pergunta 2 ------------------------------------------------------------------
@@ -213,7 +276,7 @@ pal <- res.palette(5)
 par(mar = c(2, 0, 4, 0))
 
 # linear regresion model
-target.lm.model <- lm(INDICE95 ~ AREA, data = target)
+target.lm.model <- lm(INDICE95 ~ URBLEVEL, data = target)
 summary(target.lm.model)
 
 target.lm.model.residuals <- target.lm.model$residuals
@@ -234,12 +297,14 @@ legend(x = "bottom", cex = 1, fill = attr(cols.lm, "palette"), bty = "n",
 moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
 
 # SAR model (Spatial Auto-Regressive)
-target.sar.model <- lagsarlm(INDICE95 ~ AREA, 
+target.sar.model <- lagsarlm(INDICE95 ~ URBLEVEL, 
                              data = target, 
                              listw = lw,
                              zero.policy = T, 
                              tol.solve = 1e-12)
 summary(target.sar.model)
+target.sar.model$rest.se
+target.sar.model$residuals
 
 target.sar.model.residuals <- target.sar.model$residuals
 
@@ -279,9 +344,69 @@ res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"),
 pal <- res.palette(5)
 par(mar = c(2, 0, 4, 0))
 
+coords <- cbind(target$X_COORD, target$Y_COORD)
+
 # GWR model (Geographically Weighted Regression)
-target.gwr.sel <- gwr.sel(INDICE95 ~ AREA, data = target, gweight = gwr.Gauss, verbose = F)
-target.gwr.model <- gwr(INDICE95 ~ AREA, data = target, bandwidth = target.gwr.sel, gweight = gwr.Gauss)
+target.gwr.sel <- gwr.sel(INDICE95 ~ URBLEVEL, 
+                          data = target, 
+                          coords = coords, 
+                          adapt = TRUE, 
+                          method = "aic",
+                          gweight = gwr.Gauss,
+                          verbose = TRUE)
+
+target.gwr.model <- gwr(INDICE95 ~ URBLEVEL, 
+                        data = target, 
+                        coords = coords, 
+                        bandwidth = target.gwr.sel,
+                        gweight = gwr.Gauss,
+                        adapt = target.gwr.sel,
+                        hatmatrix = TRUE)
+View(target.gwr.model)
+
+# calculate global residual SST (SQT)
+SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
+GWR_SSE <- target.gwr.model$results$rss
+r2_GWR <- 1 - (GWR_SSE / SST)
+r2_GWR
+
+# # calculate local R-Squared 
+# kGauss <- round(target.gwr.sel * length(target[,1]))
+# myknn <- knearneigh(coords, k = kGauss, longlat = FALSE, RANN = FALSE)
+# mynb <- knn2nb(myknn, sym = TRUE)
+# ap <- target@data
+# 
+# for (i in 1:length(target[,1]))
+# {
+#   # seleciona e ordena os índices dos polígonos vizinhos de i
+#   vizinhos_i <- sort(c(i, mynb[[i]]))
+#   
+#   # seleciona o slot "polygons" (lista de pol?gonos) dos vizinhos de i
+#   listapoly_vizinhos_i <- slot(target, "polygons")
+#   poligonos_i <- subset(listapoly_vizinhos_i, ap[,1] %in% vizinhos_i)
+#   
+#   # converte apenas i e seus vizinhos para o objeto SpatialPolygons
+#   sp_i <- SpatialPolygons(poligonos_i)
+#   
+#   # cria os objetos nb e listwi apenas para i e seus vizinhos
+#   mynb_i <- poly2nb(sp_i)
+#   mylistw_i <- nb2listw(mynb_i, style="W", zero.policy=TRUE)
+#   
+#   ap_i <- ap[vizinhos_i,]
+#   
+#   # calculate global residual SS of local sample
+#   sum_square_glo_i <- sum((ap_i$INDICE95 - mean(ap_i$INDICE95)) ^ 2)
+#   
+#   lm.ap_i <- lm(INDICE95 ~ URBLEVEL, data = ap_i)
+#   
+#   residuos[i] <- lm.ap_i$residuals[ap_i$ID==i]
+#   previstos[i] <- lm.ap_i$fitted.values[ap_i$ID==i]
+#   ParW[i] <- lm.ap_i$rho
+#   ParIntercepto[i] <- lm.ap_i$coefficients[1]
+#   ParEnergia[i] <- lm.ap_i$coefficients[2]
+#   r2_local[i] <- 1 - (lm.ap_i$SSE/sum_square_glo_i)
+#   print(i)
+# }
 
 # residuals
 target.gwr.residuals <- target.gwr.model$SDF$gwr.e
@@ -328,7 +453,7 @@ moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 # initial exploration in INDICE95 x AREA
 indice95_by_urblevel_plot <- ggplot(data = target@data, 
                                     aes(x = target$INDICE95, 
-                                        y = target$AREA, 
+                                        y = target$URBLEVEL, 
                                         color = target$URBLEVEL)) +
   geom_point() +
   theme(legend.position = "none") +
@@ -357,8 +482,32 @@ summary(target.ols.model)
 target$resid <- residuals(target.ols.model)
 spplot(target, "resid", main = "Residuals")
 
-# runing the error SAR model and looking at the error terms
-target.errorsar.model <- errorsarlm(formula =INDICE95 ~ 
+# runing the error lm multivaluated model and looking at the error terms
+target.lm.multivaluated.model <- lm(formula =INDICE95 ~ 
+                                      AREA + 
+                                      INDICE94 + 
+                                      GINI_91 +
+                                      POP_94 +
+                                      POP_RUR +
+                                      POP_URB +
+                                      POP_FEM +
+                                      POP_MAS +
+                                      POP_TOT +
+                                      URBLEVEL +
+                                      PIB_PC, 
+                                    data = target)
+
+summary(target.lm.multivaluated.model)
+
+# performing the stepwise selection
+target.errorsar.model.stepwise <- step(target.lm.multivaluated.model, 
+                                       direction = "both", 
+                                       test = "F")
+
+summary(target.errorsar.model.stepwise)
+
+# runing the SAR model and looking at the error terms
+target.lagsarlm.model <- lagsarlm(formula =INDICE95 ~ 
                                        AREA + 
                                        INDICE94 + 
                                        GINI_91 +
@@ -373,17 +522,20 @@ target.errorsar.model <- errorsarlm(formula =INDICE95 ~
                                      data = target,
                                      listw = lw, 
                                      quiet = T)
+summary(target.lagsarlm.model)
 
-summary(target.errorsar.model)
+# calculate global residual SST (SQT)
+SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
+GWR_SSE <- target.lagsarlm.model$SSE
+r2_GWR <- 1 - (GWR_SSE / SST)
+r2_GWR
 
-target$fitted_sem <- target.errorsar.model$fitted.values
-spplot(target, "fitted_sem", main = "Trend")
+# maps
+target$fitted_sem <- target.lagsarlm.model$fitted.values
+spplot(target, "fitted_sem", main = "Fitted values")
 
-target$resid_sem <- target.errorsar.model$residuals
-spplot(target, "resid_sem", main = "Residuals")
-
-# performing the stepwise selection
-target.errorsar.model.stepwise <- step(target.ols.model, direction = "both", test = "F")
+target$actual_sem <- target.lagsarlm.model$y
+spplot(target, "fitted_sem", main = "Actual values")
 
 names(target.errorsar.model.stepwise$coefficients) <- 
   stringr::str_sub(names(target.errorsar.model.stepwise$coefficients), 1, 25)
@@ -401,20 +553,33 @@ pal <- res.palette(5)
 par(mar = c(2, 0, 4, 0))
 
 # GWR model (Geographically Weighted Regression)
-target.gwr.sel <- gwr.sel(INDICE95 ~ 
+target.gwr.multivaluated.sel <- gwr.sel(INDICE95 ~ 
                             INDICE94 +
                             GINI_91 + 
                             URBLEVEL, 
-                          data = target, 
-                          gweight = gwr.Gauss, 
-                          verbose = F)
-target.gwr.model <- gwr(INDICE95 ~ 
+                            data = target, 
+                            coords = coords, 
+                            adapt = TRUE, 
+                            method = "aic",
+                            gweight = gwr.Gauss,
+                            verbose = TRUE)
+
+target.gwr.multivaluated.model <- gwr(INDICE95 ~ 
                           INDICE94 +
                           GINI_91 + 
                           URBLEVEL, 
-                        data = target, 
-                        bandwidth = target.gwr.sel, 
-                        gweight = gwr.Gauss)
+                          data = target, 
+                          coords = coords, 
+                          bandwidth = target.gwr.multivaluated.sel,
+                          gweight = gwr.Gauss,
+                          adapt = target.gwr.multivaluated.sel,
+                          hatmatrix = TRUE)
+
+# calculate global residual SST (SQT)
+SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
+GWR_SSE <- target.gwr.multivaluated.model$results$rss
+r2_GWR <- 1 - (GWR_SSE / SST)
+r2_GWR
 
 # residuals
 target.gwr.residuals <- target.gwr.model$SDF$gwr.e
