@@ -581,6 +581,13 @@ GWR_SSE <- target.gwr.multivaluated.model$results$rss
 r2_GWR <- 1 - (GWR_SSE / SST)
 r2_GWR
 
+# maps
+target$fitted_sem <- target.gwr.multivaluated.model$lm$fitted.values
+spplot(target, "fitted_sem", main = "Fitted values")
+
+target$actual_sem <- target.gwr.multivaluated.model$lm$y
+spplot(target, "fitted_sem", main = "Actual values")
+
 # residuals
 target.gwr.residuals <- target.gwr.model$SDF$gwr.e
 
