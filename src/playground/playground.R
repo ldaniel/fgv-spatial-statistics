@@ -102,9 +102,13 @@ xy <- coordinates(target)
 
 # neighborhood matrix from spatial polygons / adjacent polygons
 
-# using the spdep library
-ap <- poly2nb(target, queen = T)
+# using the spdep library to generate first order
+ap <- poly2nb(target, queen = T, row.names = target$ID)
 lw <- nb2listw(ap, style = "W", zero.policy = TRUE)
+
+# using the spdep library to generate second order
+# ap2 = nblag(ap, 2)
+# lw2 <- nb2listw(ap2, style = "W", zero.policy = TRUE)
 
 class(ap)
 summary(ap)
@@ -114,7 +118,7 @@ plot(target, col = 'cadetblue2', border = 'deepskyblue4', lwd = 1)
 plot(ap, xy, col = 'red', lwd = 2, add = TRUE)
 
 # using the bamlss library
-nm <- neighbormatrix(target)
+nm <- neighbormatrix(target, type = "boundary")
 print(nm)
 plotneighbors(target)
 plotneighbors(target, type = "delaunay")
@@ -147,11 +151,14 @@ moran.test.all <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
                         t(data.frame("URBLEVEL" = moran.test.URBLEVEL$estimate)),
                         t(data.frame("PIB_PC" = moran.test.PIB_PC$estimate)))
 
+moran.test.all <- as_tibble(moran.test.all, rownames = "Variables")
+moran.test.all %>% arrange(desc(`Moran I statistic`))
+
 print(moran.test.all)
 
-# Moran scatterplot for AREA
+# Moran scatterplot for INDICE94
 par(mar = c(4,4,1.5,0.5))
-moran.plot(target$AREA, 
+moran.plot(target$INDICE94, 
            listw = lw, 
            zero.policy = T,
            pch = 16, 
@@ -159,22 +166,22 @@ moran.plot(target$AREA,
            cex = .5, 
            quiet = F,
            labels = as.character(target$MUNIC),
-           xlab = "Percent for Area",
-           ylab = "Percent for Area (Spatial Lag)", 
+           xlab = "Percent for INDICE94",
+           ylab = "Percent for INDICE94 (Spatial Lag)", 
            main = "Moran Scatterplot")
 
-# LISA map for AREA
-locm <- localmoran(target$AREA, lw)
+# LISA map for INDICE94 
+locm <- localmoran(target$INDICE94,lw)
 
-target$sPPOV <- scale(target$AREA)
+target$sPPOV <- scale(target$INDICE94)
 target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
 
-plot(x = target$sPPOV, y = target$lag_sPPOV, main = " Moran Scatterplot PPOV")
+plot(x = target$sPPOV, y = target$lag_sPPOV, main = "Moran Scatterplot PPOV")
 abline(h = 0, v = 0)
 abline(lm(target$lag_sPPOV ~ target$sPPOV), lty = 3, lwd = 4, col = "red")
 
 # check out the outliers click on one or two and then hit escape or click finish
-identify(target$sPPOV, target$lag_sPPOV, target$AREA, cex = 0.8)
+identify(target$sPPOV, target$lag_sPPOV, target$INDICE94, cex = 0.8)
 
 target$quad_sig <- NA
 target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
