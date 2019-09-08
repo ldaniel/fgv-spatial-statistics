@@ -4,16 +4,7 @@
 
 # libraries for data prep
 library(dplyr)
-# library(readr)
-# library(magrittr)
-# library(forcats)
-# library(lubridate)
 library(stringr)
-# library(feather)
-# library(fastDummies)
-# library(reshape2)
-# library(knitr)
-
 
 # libraries for spatial data manipulation
 library(spatialreg)
@@ -35,28 +26,9 @@ library(RColorBrewer)
 library(tmap)
 library(ggplot2)
 library(ggExtra)
-# library(ggthemes)
-# library(ggcorrplot)
-# library(ggpubr)
-# library(plotly)
-
-# libraries for data clean
-# library(VIM)
-# library(rms)
-# library(mctest)
 
 # libraries for modeling
-# library(caret)
-# library(gmodels)
 library(MASS)
-# library(rpart)
-# library(rpart.plot)
-# library(adabag)
-# library(randomForest)
-
-# libraries for measures
-# library(hmeasure)
-# library(pROC)
 
 # loading other scripts do be used here ---------------------------------------
 source("./src/datapreparation/step_00_config_environment.R")
@@ -105,10 +77,6 @@ xy <- coordinates(target)
 # using the spdep library to generate first order
 ap <- poly2nb(target, queen = T, row.names = target$ID)
 lw <- nb2listw(ap, style = "W", zero.policy = TRUE)
-
-# using the spdep library to generate second order
-# ap2 = nblag(ap, 2)
-# lw2 <- nb2listw(ap2, style = "W", zero.policy = TRUE)
 
 class(ap)
 summary(ap)
@@ -425,9 +393,9 @@ moran.test(target.gwr.residuals, listw = lw, zero.policy = T)
 
 
 # coefficients
-target.gwr.coefficients <- target.gwr.model$SDF$AREA
+target.gwr.coefficients <- target.gwr.model$SDF$URBLEVEL
 
-target.gwr.coefficients.classes_fx <- classIntervals(target.gwr.coefficients, n = 5, style="fixed", 
+target.gwr.coefficients.classes_fx <- classIntervals(target.gwr.coefficients, n = 5, style = "fixed", 
                                                      fixedBreaks=c(-.005,-.003,-.001,.001,.003,.005), 
                                                      rtimes = 1)
 cols.gwr.coefficients <- findColours(target.gwr.coefficients.classes_fx, pal)
@@ -435,7 +403,7 @@ cols.gwr.coefficients <- findColours(target.gwr.coefficients.classes_fx, pal)
 plot(target, col = cols.gwr.coefficients, main = "GWR Model (coefficients)", border = "grey")
 legend(x = "bottom", cex = 1, fill = attr(cols.gwr.coefficients,"palette"), bty = "n",
        legend = names(attr(cols.gwr.coefficients, "table")),
-       title = "Local Coefficient Estimates (area)", ncol = 3)
+       title = "Local Coefficient Estimates (URBLEVEL)", ncol = 3)
 
 moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 
@@ -482,7 +450,7 @@ summary(target.ols.model)
 target$resid <- residuals(target.ols.model)
 spplot(target, "resid", main = "Residuals")
 
-# runing the error lm multivaluated model and looking at the error terms
+# runing the lm multivaluated model
 target.lm.multivaluated.model <- lm(formula =INDICE95 ~ 
                                       AREA + 
                                       INDICE94 + 
@@ -500,13 +468,13 @@ target.lm.multivaluated.model <- lm(formula =INDICE95 ~
 summary(target.lm.multivaluated.model)
 
 # performing the stepwise selection
-target.errorsar.model.stepwise <- step(target.lm.multivaluated.model, 
+target.sar.model.stepwise <- step(target.lm.multivaluated.model, 
                                        direction = "both", 
                                        test = "F")
 
-summary(target.errorsar.model.stepwise)
+summary(target.sar.model.stepwise)
 
-# runing the SAR model and looking at the error terms
+# runing the SAR model
 target.lagsarlm.model <- lagsarlm(formula =INDICE95 ~ 
                                        AREA + 
                                        INDICE94 + 
@@ -537,9 +505,9 @@ spplot(target, "fitted_sem", main = "Fitted values")
 target$actual_sem <- target.lagsarlm.model$y
 spplot(target, "fitted_sem", main = "Actual values")
 
-names(target.errorsar.model.stepwise$coefficients) <- 
-  stringr::str_sub(names(target.errorsar.model.stepwise$coefficients), 1, 25)
-summary(target.errorsar.model.stepwise)
+names(target.sar.model.stepwise$coefficients) <- 
+  stringr::str_sub(names(target.sar.model.stepwise$coefficients), 1, 25)
+summary(target.sar.model.stepwise)
 
 # Pergunta 7 (bônus) ----------------------------------------------------------
 # Promova o modelo final linear da Pergunta 6 a um modelo GWR. Apresente os 
@@ -554,26 +522,26 @@ par(mar = c(2, 0, 4, 0))
 
 # GWR model (Geographically Weighted Regression)
 target.gwr.multivaluated.sel <- gwr.sel(INDICE95 ~ 
-                            INDICE94 +
-                            GINI_91 + 
-                            URBLEVEL, 
-                            data = target, 
-                            coords = coords, 
-                            adapt = TRUE, 
-                            method = "aic",
-                            gweight = gwr.Gauss,
-                            verbose = TRUE)
+                                          INDICE94 +
+                                          GINI_91 + 
+                                          URBLEVEL, 
+                                          data = target, 
+                                          coords = coords, 
+                                          adapt = TRUE, 
+                                          method = "aic",
+                                          gweight = gwr.Gauss,
+                                          verbose = TRUE)
 
 target.gwr.multivaluated.model <- gwr(INDICE95 ~ 
-                          INDICE94 +
-                          GINI_91 + 
-                          URBLEVEL, 
-                          data = target, 
-                          coords = coords, 
-                          bandwidth = target.gwr.multivaluated.sel,
-                          gweight = gwr.Gauss,
-                          adapt = target.gwr.multivaluated.sel,
-                          hatmatrix = TRUE)
+                                        INDICE94 +
+                                        GINI_91 + 
+                                        URBLEVEL, 
+                                        data = target, 
+                                        coords = coords, 
+                                        bandwidth = target.gwr.multivaluated.sel,
+                                        gweight = gwr.Gauss,
+                                        adapt = target.gwr.multivaluated.sel,
+                                        hatmatrix = TRUE)
 
 # calculate global residual SST (SQT)
 SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
@@ -602,7 +570,6 @@ legend(x = "bottom", cex = 1, fill = attr(cols.gwr.residuals,"palette"), bty = "
        title = "Residuals from GWR Model", ncol = 5)
 
 moran.test(target.gwr.residuals, listw = lw, zero.policy = T)
-
 
 # coefficients
 target.gwr.coefficients <- target.gwr.model$SDF$URBLEVEL
