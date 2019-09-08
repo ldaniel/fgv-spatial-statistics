@@ -12,8 +12,6 @@ mytable_empty_cols <-  sapply(target@data, function(x) table(as.character(x) == 
 # for the missing columns based on the average values for the rest of
 # cities in Minas Gerais.
 
-View(target@data)
-
 # converting columns from text to numeric
 target$POP_RUR <- as.numeric(as.character(target$POP_RUR))
 target$POP_URB <- as.numeric(as.character(target$POP_URB))
