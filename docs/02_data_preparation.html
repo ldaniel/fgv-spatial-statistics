@@ -159,7 +159,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -413,28 +412,16 @@ $(document).ready(function () {
 <div id="TOC">
 <ul>
 <li><a href="#using-a-step-by-step-approach"><span class="toc-section-number">1</span> Using a step by step approach</a></li>
-<li><a href="#create-functions-step-1"><span class="toc-section-number">2</span> Create Functions (step 1)</a><ul>
-<li><a href="#function-1"><span class="toc-section-number">2.1</span> Function 1</a></li>
-<li><a href="#function-2"><span class="toc-section-number">2.2</span> Function 2</a></li>
-<li><a href="#function-3"><span class="toc-section-number">2.3</span> Function 3</a></li>
-<li><a href="#function-n"><span class="toc-section-number">2.4</span> Function n</a></li>
-</ul></li>
+<li><a href="#config-environment-step-1"><span class="toc-section-number">2</span> Config Environment (step 1)</a></li>
 <li><a href="#data-ingestion-step-2"><span class="toc-section-number">3</span> Data Ingestion (step 2)</a></li>
-<li><a href="#data-cleaning-step-3"><span class="toc-section-number">4</span> Data Cleaning (step 3)</a></li>
-<li><a href="#label-translation-step-4"><span class="toc-section-number">5</span> Label Translation (step 4)</a></li>
-<li><a href="#data-enhancement-step-5"><span class="toc-section-number">6</span> Data Enhancement (step 5)</a></li>
-<li><a href="#data-preparation-for-predictive-modeling-step-6"><span class="toc-section-number">7</span> Data Preparation for Predictive Modeling (step 6)</a><ul>
-<li><a href="#selecting-the-target-dataset"><span class="toc-section-number">7.1</span> Selecting the target dataset</a></li>
-<li><a href="#splitting-dataset-into-train-and-test-data"><span class="toc-section-number">7.2</span> Splitting dataset into Train and Test data</a></li>
-</ul></li>
 </ul>
 </div>
 
 <div id="using-a-step-by-step-approach" class="section level1">
 <h1><span class="header-section-number">1</span> Using a step by step approach</h1>
-<p>Before starting the analysis for the {{Spatial-Statistics}}, a few important steps were taken in order to prepare the source data files. These steps are listed below:</p>
+<p>Before starting the analysis for the Spatial-Statistics, a few important steps were taken in order to prepare the source data files. These steps are listed below:</p>
 <ul>
-<li><strong>Step 01</strong>: Create Functions;</li>
+<li><strong>Step 01</strong>: Config Environment;</li>
 <li><strong>Step 02</strong>: Data Ingestion;</li>
 <li><strong>Step 03</strong>: Data Cleaning;</li>
 <li><strong>Step 04</strong>: Label Translation;</li>
@@ -443,257 +430,38 @@ $(document).ready(function () {
 </ul>
 <hr />
 </div>
-<div id="create-functions-step-1" class="section level1">
-<h1><span class="header-section-number">2</span> Create Functions (step 1)</h1>
-<p>This step create functions to be used in the next steps. Following, all functions created are described.</p>
-<div id="function-1" class="section level2">
-<h2><span class="header-section-number">2.1</span> Function 1</h2>
-<p>Description of function 1.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Function 1 code</span></a></code></pre></div>
-</div>
-<div id="function-2" class="section level2">
-<h2><span class="header-section-number">2.2</span> Function 2</h2>
-<p>Description of function 2.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># Function 2 code</span></a></code></pre></div>
-</div>
-<div id="function-3" class="section level2">
-<h2><span class="header-section-number">2.3</span> Function 3</h2>
-<p>Description of function 3.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Function 3 code</span></a></code></pre></div>
-</div>
-<div id="function-n" class="section level2">
-<h2><span class="header-section-number">2.4</span> Function n</h2>
-<p>Description of function n.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># Function n code</span></a></code></pre></div>
+<div id="config-environment-step-1" class="section level1">
+<h1><span class="header-section-number">2</span> Config Environment (step 1)</h1>
+<p>This step do an initial setup configuration for the project.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># clearing everything before starting -----------------------------------------</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="co"># clear environment and memory</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="kw">invisible</span>(<span class="kw">gc</span>())</a>
+<a class="sourceLine" id="cb1-5" title="5"></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co"># clear console screen</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="kw">cat</span>(<span class="st">&quot;</span><span class="ch">\014</span><span class="st">&quot;</span>)</a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co"># clear plots</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="cf">while</span> (<span class="op">!</span><span class="kw">is.null</span>(<span class="kw">dev.list</span>()))  </a>
+<a class="sourceLine" id="cb1-11" title="11">  <span class="kw">dev.off</span>()</a>
+<a class="sourceLine" id="cb1-12" title="12"></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="co"># setting the environment -----------------------------------------------------</span></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="kw">options</span>(<span class="dt">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>)</a>
+<a class="sourceLine" id="cb1-15" title="15"></a>
+<a class="sourceLine" id="cb1-16" title="16">info.username  &lt;-<span class="st"> </span><span class="kw">Sys.info</span>()[[<span class="st">&quot;user&quot;</span>]]</a>
+<a class="sourceLine" id="cb1-17" title="17">info.sysname   &lt;-<span class="st"> </span><span class="kw">Sys.info</span>()[[<span class="st">&quot;sysname&quot;</span>]]</a>
+<a class="sourceLine" id="cb1-18" title="18">info.machine   &lt;-<span class="st"> </span><span class="kw">Sys.info</span>()[[<span class="st">&quot;machine&quot;</span>]]</a>
+<a class="sourceLine" id="cb1-19" title="19">info.encoding  &lt;-<span class="st"> </span><span class="kw">getOption</span>(<span class="st">&quot;encoding&quot;</span>)</a>
+<a class="sourceLine" id="cb1-20" title="20">directoryPath  &lt;-<span class="st"> </span><span class="kw">dirname</span>(rstudioapi<span class="op">::</span><span class="kw">getSourceEditorContext</span>()<span class="op">$</span>path)</a>
+<a class="sourceLine" id="cb1-21" title="21">directoryPath  &lt;-<span class="st"> </span>stringr<span class="op">::</span><span class="kw">str_replace</span>(directoryPath, <span class="st">&quot;/src/datapreparation&quot;</span>, <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb1-22" title="22"></a>
+<a class="sourceLine" id="cb1-23" title="23"><span class="kw">setwd</span>(directoryPath)</a>
+<a class="sourceLine" id="cb1-24" title="24"><span class="kw">getwd</span>()</a></code></pre></div>
 <hr />
-</div>
 </div>
 <div id="data-ingestion-step-2" class="section level1">
 <h1><span class="header-section-number">3</span> Data Ingestion (step 2)</h1>
-<p>The process of data ingestion — preparing data for analysis — usually includes steps called extract (taking the data from its current location), transform (cleansing and normalizing the data), and load (placing the data in a database where it can be analyzed).</p>
-<p>During this step, in addition to the loading data processes, it was performed data casting, column renaming and small touch-ups. The list below describe each table adjustment taken:</p>
-<ul>
-<li><strong>Table 1</strong>: short description about what was done in the table 1;</li>
-<li><strong>Table 2</strong>: short description about what was done in the table 2;</li>
-<li><strong>Table 3</strong>: short description about what was done in the table 3;</li>
-<li><strong>Table n</strong>: short description about what was done in the table n;</li>
-</ul>
-<hr />
-</div>
-<div id="data-cleaning-step-3" class="section level1">
-<h1><span class="header-section-number">4</span> Data Cleaning (step 3)</h1>
-<p>The objective of this step is analysing missing values and other strange conditions. In order to accomplish this task, a few R functions were used to quickly discover missing values, like NA and empty fields.</p>
-<p>First thing done, was fixing observations in k_symbol transaction table with ’ ’ (one space) to empty string (’’), using the following command.</p>
-<p>Then, the command below was used to find out any NA values in each table.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">sum</span>(<span class="kw">is.na</span>(x)))</a></code></pre></div>
-<p>Solely the <strong>transaction</strong> table has NA values, in the following columns:</p>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th align="right">x</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>CODMUNI</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>ID</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>MUNIC</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>AREA</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>INDICE94</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>INDICE95</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>GINI_91</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>POP_94</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>POP_RUR</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>POP_URB</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>POP_FEM</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>POP_MAS</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>POP_TOT</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>URBLEVEL</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>PIB_PC</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>X_COORD</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>Y_COORD</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<p>Finally, the following command was used in each table to find out where empty values was hidden.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">table</span>(<span class="kw">as.character</span>(x) <span class="op">==</span><span class="st">&quot;&quot;</span>)[<span class="st">&quot;TRUE&quot;</span>])</a></code></pre></div>
-<p>Again, only the <strong>transaction</strong> table had empty values, according to the table below:</p>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th align="right">x</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>CODMUNI.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>ID.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>MUNIC.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>AREA.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>INDICE94.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>INDICE95.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>GINI_91.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>POP_94.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>POP_RUR.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>POP_URB.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>POP_FEM.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>POP_MAS.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>POP_TOT.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>URBLEVEL.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>PIB_PC.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td>X_COORD.NA</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td>Y_COORD.NA</td>
-<td align="right">NA</td>
-</tr>
-</tbody>
-</table>
-<p>For the exploration analysis report, we did not take any additional action, since the missing values was not relevant.</p>
-<hr />
-</div>
-<div id="label-translation-step-4" class="section level1">
-<h1><span class="header-section-number">5</span> Label Translation (step 4)</h1>
-<p>In order to make the data information more understandable, it was translated some relevant labels and domains from Czech to English.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># Translating relevant labels and domains to english --------------------------------------------</span></a>
-<a class="sourceLine" id="cb7-2" title="2"></a>
-<a class="sourceLine" id="cb7-3" title="3">mytable<span class="op">$</span>x_var_<span class="dv">1</span> &lt;-<span class="st"> </span>plyr<span class="op">::</span><span class="kw">mapvalues</span>(mytable<span class="op">$</span>x_var_<span class="dv">1</span>, </a>
-<a class="sourceLine" id="cb7-4" title="4">                                   <span class="kw">c</span>(<span class="st">&#39;Other_Language_Column_Name1&#39;</span>, </a>
-<a class="sourceLine" id="cb7-5" title="5">                                     <span class="st">&#39;Other_Language_Column_Name2&#39;</span>, </a>
-<a class="sourceLine" id="cb7-6" title="6">                                     <span class="st">&#39;Other_Language_Column_Name3&#39;</span>),</a>
-<a class="sourceLine" id="cb7-7" title="7">                                   <span class="kw">c</span>(<span class="st">&#39;English_Column_Name1&#39;</span>, </a>
-<a class="sourceLine" id="cb7-8" title="8">                                     <span class="st">&#39;English_Column_Name2&#39;</span>, </a>
-<a class="sourceLine" id="cb7-9" title="9">                                     <span class="st">&#39;English_Column_Name3&#39;</span>))</a></code></pre></div>
-<hr />
-</div>
-<div id="data-enhancement-step-5" class="section level1">
-<h1><span class="header-section-number">6</span> Data Enhancement (step 5)</h1>
-<p>This step aims to improve the analysis by adding auxiliary information. Data enhancement is all about making sure any data that is coming into the business is being looked at with a critical eye and is being filtered down to maximize its value.</p>
-<p>&lt;Describe what kind of data enhancement you have to do. Include chuncks of code to ilustrate what is necessary.&gt;</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># your code with the enhancements goes here</span></a></code></pre></div>
-<hr />
-</div>
-<div id="data-preparation-for-predictive-modeling-step-6" class="section level1">
-<h1><span class="header-section-number">7</span> Data Preparation for Predictive Modeling (step 6)</h1>
-<div id="selecting-the-target-dataset" class="section level2">
-<h2><span class="header-section-number">7.1</span> Selecting the target dataset</h2>
-<p>The below function was created to be used in the modeling exercises to be performed, the idea is to have a standard way to get the prepared data set already prepared with correct data types and dummies.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co"># your code with the data preparation goes here</span></a></code></pre></div>
-</div>
-<div id="splitting-dataset-into-train-and-test-data" class="section level2">
-<h2><span class="header-section-number">7.2</span> Splitting dataset into Train and Test data</h2>
-<p>The below function was created to be used in the modeling exercises to be split the source_dataset into train and test datasets.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">mydataset &lt;-<span class="st"> </span>fgvr<span class="op">::</span><span class="kw">createTestAndTrainSamples</span>(<span class="dt">dataset =</span> you_dataset_name, <span class="dt">yvar =</span> <span class="st">&quot;your_y_var&quot;</span>, </a>
-<a class="sourceLine" id="cb10-2" title="2">                                             <span class="dt">seed =</span> <span class="dv">12345</span>, <span class="dt">percentage =</span> <span class="fl">0.7</span>)</a></code></pre></div>
-<p>To make sure all the models uses the same datasets for Train and Testing we are saving the initial sampling to be reused across the models.</p>
-<p>This will ensure consistency when comparing the models against each other.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co"># calling function to split and create train and test databases</span></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="co"># this function will split the dataset into train and test data and save the sampling in disk</span></a>
-<a class="sourceLine" id="cb11-3" title="3"><span class="co"># to resample just delete &#39;./models/source_train_test_dataset.rds&#39; file and rerun this script</span></a>
-<a class="sourceLine" id="cb11-4" title="4"><span class="cf">if</span> (<span class="kw">file.exists</span>(<span class="st">&#39;./models/source_train_test_dataset.rds&#39;</span>)) {</a>
-<a class="sourceLine" id="cb11-5" title="5">  source_train_test_dataset &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&#39;./models/source_train_test_dataset.rds&#39;</span>)</a>
-<a class="sourceLine" id="cb11-6" title="6">} <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb11-7" title="7">  source_train_test_dataset &lt;-<span class="st"> </span>mydataset</a>
-<a class="sourceLine" id="cb11-8" title="8">  <span class="kw">saveRDS</span>(source_train_test_dataset, <span class="st">&#39;./models/source_train_test_dataset.rds&#39;</span>)  </a>
-<a class="sourceLine" id="cb11-9" title="9">}</a></code></pre></div>
-</div>
+<p>The process of data ingestion</p>
 </div>
 
 
