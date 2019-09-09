@@ -1,6 +1,4 @@
 # loading required libraries --------------------------------------------------
-# FGVR library for data science power-ups
-# library(fgvr)
 
 # libraries for data prep
 library(dplyr)
@@ -31,13 +29,12 @@ library(ggExtra)
 library(MASS)
 
 # loading other scripts do be used here ---------------------------------------
-source("./src/datapreparation/step_00_config_environment.R")
-source("./src/datapreparation/step_01_create_functions.R")
-source("./src/datapreparation/step_02_data_ingestion.R")
-source("./src/datapreparation/step_03_data_cleaning.R")
-source("./src/datapreparation/step_04_label_translation.R")
-source("./src/datapreparation/step_05_data_enhancement.R")
-source("./src/datapreparation/step_06_dataset_preparation.R")
+source("./src/util/auxiliary_functions.R")
+
+# performing data (processed) loading -----------------------------------------
+dataRawDirectory <- "./data/processed/"
+shapefile_to_read <- paste(dataRawDirectory, "crime_mg_processed.shp", sep = "")
+target <- readOGR(shapefile_to_read, encoding="UTF-8")
 
 # doing some spatial exploratory analysis -------------------------------------
 View(target)

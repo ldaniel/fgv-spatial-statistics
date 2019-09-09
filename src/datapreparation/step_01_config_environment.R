@@ -18,7 +18,7 @@ info.sysname   <- Sys.info()[["sysname"]]
 info.machine   <- Sys.info()[["machine"]]
 info.encoding  <- getOption("encoding")
 directoryPath  <- dirname(rstudioapi::getSourceEditorContext()$path)
-directoryPath  <- stringr::str_replace(directoryPath, "/src/playground", "")
+directoryPath  <- stringr::str_replace(directoryPath, "/src/datapreparation", "")
 
 setwd(directoryPath)
 getwd()
