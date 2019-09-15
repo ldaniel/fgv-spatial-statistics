@@ -9,7 +9,14 @@ knitr::opts_chunk$set(fig.pos =  "h")
 knitr::opts_knit$set(root.dir = "../")
 
 # loading required libraries and scripts
+library(rmarkdown)
+library(dplyr)
 library(knitr)
+library(rgdal)
+library(raster)
+library(spdep)
+library(bamlss)
+library(shapefiles)
 ```
 
 
@@ -115,7 +122,7 @@ There are 33 cities in which the variables POP_RUR, POP_URB, POP_FEM, POP_MAS, P
 
 The following adjustments were taken:
 
-```{r echo=FALSE, results = 'asis'}
+``` {r data_clean, eval = FALSE}
 
 # converting columns from text to numeric
 target$POP_RUR <- as.numeric(as.character(target$POP_RUR))

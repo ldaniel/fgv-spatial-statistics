@@ -414,6 +414,12 @@ $(document).ready(function () {
 <li><a href="#using-a-step-by-step-approach"><span class="toc-section-number">1</span> Using a step by step approach</a></li>
 <li><a href="#config-environment-step-1"><span class="toc-section-number">2</span> Config Environment (step 1)</a></li>
 <li><a href="#data-ingestion-step-2"><span class="toc-section-number">3</span> Data Ingestion (step 2)</a></li>
+<li><a href="#data-cleaning-step-3"><span class="toc-section-number">4</span> Data Cleaning (step 3)</a></li>
+<li><a href="#label-translation-step-4"><span class="toc-section-number">5</span> Label Translation (step 4)</a></li>
+<li><a href="#data-enhancement-step-5"><span class="toc-section-number">6</span> Data Enhancement (step 5)</a></li>
+<li><a href="#data-preparation-for-the-spatial-statistics-step-6"><span class="toc-section-number">7</span> Data Preparation for the Spatial Statistics (step 6)</a><ul>
+<li><a href="#selecting-the-target-dataset"><span class="toc-section-number">7.1</span> Selecting the target dataset</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -461,7 +467,238 @@ $(document).ready(function () {
 </div>
 <div id="data-ingestion-step-2" class="section level1">
 <h1><span class="header-section-number">3</span> Data Ingestion (step 2)</h1>
-<p>The process of data ingestion</p>
+<p>The process of data ingestion — preparing data for analysis — usually includes steps called extract (taking the data from its current location), transform (cleansing and normalizing the data), and load (placing the data in a database where it can be analyzed).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># performing data loading -----------------------------------------------------</span></a>
+<a class="sourceLine" id="cb2-2" title="2">dataRawDirectory &lt;-<span class="st"> &quot;./data/raw/&quot;</span></a>
+<a class="sourceLine" id="cb2-3" title="3">shapefile_to_read &lt;-<span class="st"> </span><span class="kw">paste</span>(dataRawDirectory, <span class="st">&quot;crime_mg.shp&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb2-4" title="4"></a>
+<a class="sourceLine" id="cb2-5" title="5">target &lt;-<span class="st"> </span><span class="kw">readOGR</span>(shapefile_to_read, <span class="dt">encoding=</span><span class="st">&quot;UTF-8&quot;</span>)</a></code></pre></div>
+<hr />
+</div>
+<div id="data-cleaning-step-3" class="section level1">
+<h1><span class="header-section-number">4</span> Data Cleaning (step 3)</h1>
+<p>The objective of this step is analysing missing values and other strange conditions. In order to accomplish this task, a few R functions were used to quickly discover missing values, like NA and empty fields.</p>
+<p>The command below was used to find out any NA values in each table.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">sum</span>(<span class="kw">is.na</span>(x)))</a></code></pre></div>
+<p>There was no tables with NA values:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CODMUNI</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>ID</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>MUNIC</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>AREA</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>INDICE94</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>INDICE95</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>GINI_91</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>POP_94</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>POP_RUR</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>POP_URB</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>POP_FEM</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>POP_MAS</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>POP_TOT</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>URBLEVEL</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>PIB_PC</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td>X_COORD</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td>Y_COORD</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, the following command was used in each table to find out where empty values was hidden.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">table</span>(<span class="kw">as.character</span>(x) <span class="op">==</span><span class="st">&quot;&quot;</span>)[<span class="st">&quot;TRUE&quot;</span>])</a></code></pre></div>
+<p>There was no tables with empty values:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CODMUNI.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>ID.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>MUNIC.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>AREA.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>INDICE94.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>INDICE95.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>GINI_91.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>POP_94.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>POP_RUR.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>POP_URB.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>POP_FEM.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>POP_MAS.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>POP_TOT.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>URBLEVEL.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>PIB_PC.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td>X_COORD.NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td>Y_COORD.NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>For the exploration analysis report, we did not take any additional action, since the missing values was not relevant.</p>
+<p>There are 33 cities in which the variables POP_RUR, POP_URB, POP_FEM, POP_MAS, POP_TOT have zero in their values, however the column POP_94 has value greater than zero. so, the strategy is to produce the value for the missing columns based on the average values for the rest of cities in Minas Gerais.</p>
+<p>The following adjustments were taken:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># converting columns from text to numeric</span></a>
+<a class="sourceLine" id="cb5-2" title="2">target<span class="op">$</span>POP_RUR &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(target<span class="op">$</span>POP_RUR))</a>
+<a class="sourceLine" id="cb5-3" title="3">target<span class="op">$</span>POP_URB &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(target<span class="op">$</span>POP_URB))</a>
+<a class="sourceLine" id="cb5-4" title="4">target<span class="op">$</span>POP_FEM &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(target<span class="op">$</span>POP_FEM))</a>
+<a class="sourceLine" id="cb5-5" title="5">target<span class="op">$</span>POP_MAS &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(target<span class="op">$</span>POP_MAS))</a>
+<a class="sourceLine" id="cb5-6" title="6"></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co"># getting rural population and female&#39;s mean ratio</span></a>
+<a class="sourceLine" id="cb5-8" title="8">target.dataframe &lt;-<span class="st"> </span><span class="kw">as</span>(target, <span class="st">&quot;data.frame&quot;</span>)</a>
+<a class="sourceLine" id="cb5-9" title="9">target.dataframe &lt;-<span class="st"> </span><span class="kw">filter</span>(target.dataframe, POP_RUR <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb5-10" title="10">poprur.ratio &lt;-<span class="st"> </span><span class="kw">mean</span>(target.dataframe<span class="op">$</span>POP_RUR) <span class="op">/</span><span class="st"> </span><span class="kw">mean</span>(target.dataframe<span class="op">$</span>POP_URB)</a>
+<a class="sourceLine" id="cb5-11" title="11">pophm.ratio  &lt;-<span class="st"> </span><span class="kw">mean</span>(target.dataframe<span class="op">$</span>POP_MAS) <span class="op">/</span><span class="st"> </span><span class="kw">mean</span>(target.dataframe<span class="op">$</span>POP_FEM)</a>
+<a class="sourceLine" id="cb5-12" title="12">popfem.ratio &lt;-<span class="st"> </span><span class="kw">mean</span>(target.dataframe<span class="op">$</span>POP_FEM) <span class="op">/</span><span class="st"> </span><span class="kw">mean</span>(target.dataframe<span class="op">$</span>POP_TOT)</a>
+<a class="sourceLine" id="cb5-13" title="13"></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="co"># adjusting rows with zero in POP_RUR, POP_URB, POP_FEM, POP_MAS and POP_TOT</span></a>
+<a class="sourceLine" id="cb5-15" title="15">target<span class="op">$</span>POP_RUR &lt;-<span class="st"> </span><span class="kw">ifelse</span>(target<span class="op">$</span>POP_RUR <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb5-16" title="16">                         <span class="kw">round</span>(target<span class="op">$</span>POP_<span class="dv">94</span> <span class="op">*</span><span class="st"> </span>poprur.ratio, <span class="dt">digits =</span> <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb5-17" title="17">                         <span class="kw">round</span>(target<span class="op">$</span>POP_RUR, <span class="dt">digits =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb5-18" title="18">target<span class="op">$</span>POP_URB &lt;-<span class="st"> </span><span class="kw">ifelse</span>(target<span class="op">$</span>POP_URB <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb5-19" title="19">                         <span class="kw">round</span>(target<span class="op">$</span>POP_<span class="dv">94</span> <span class="op">-</span><span class="st"> </span>target<span class="op">$</span>POP_RUR, <span class="dt">digits =</span> <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb5-20" title="20">                         <span class="kw">round</span>(target<span class="op">$</span>POP_URB, <span class="dt">digits =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb5-21" title="21">target<span class="op">$</span>POP_FEM &lt;-<span class="st"> </span><span class="kw">ifelse</span>(target<span class="op">$</span>POP_FEM <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb5-22" title="22">                         <span class="kw">round</span>(target<span class="op">$</span>POP_<span class="dv">94</span> <span class="op">*</span><span class="st"> </span>popfem.ratio, <span class="dt">digits =</span> <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb5-23" title="23">                         <span class="kw">round</span>(target<span class="op">$</span>POP_FEM, <span class="dt">digits =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb5-24" title="24">target<span class="op">$</span>POP_MAS &lt;-<span class="st"> </span><span class="kw">ifelse</span>(target<span class="op">$</span>POP_MAS <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb5-25" title="25">                         <span class="kw">round</span>(target<span class="op">$</span>POP_<span class="dv">94</span> <span class="op">-</span><span class="st"> </span>target<span class="op">$</span>POP_FEM, <span class="dt">digits =</span> <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb5-26" title="26">                         <span class="kw">round</span>(target<span class="op">$</span>POP_MAS, <span class="dt">digits =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb5-27" title="27">target<span class="op">$</span>POP_TOT &lt;-<span class="st"> </span><span class="kw">ifelse</span>(target<span class="op">$</span>POP_TOT <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb5-28" title="28">                         <span class="kw">round</span>(target<span class="op">$</span>POP_<span class="dv">94</span>, <span class="dt">digits =</span> <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb5-29" title="29">                         <span class="kw">round</span>(target<span class="op">$</span>POP_TOT, <span class="dt">digits =</span> <span class="dv">0</span>))</a></code></pre></div>
+<hr />
+</div>
+<div id="label-translation-step-4" class="section level1">
+<h1><span class="header-section-number">5</span> Label Translation (step 4)</h1>
+<p>In order to make the data information more understandable, it was translated some relevant labels and domains from Czech to English.</p>
+<p>For this project this step is not required.</p>
+<hr />
+</div>
+<div id="data-enhancement-step-5" class="section level1">
+<h1><span class="header-section-number">6</span> Data Enhancement (step 5)</h1>
+<p>This step aims to improve the analysis by adding auxiliary information. Data enhancement is all about making sure any data that is coming into the business is being looked at with a critical eye and is being filtered down to maximize its value.</p>
+<p>For this project this step is not required.</p>
+<hr />
+</div>
+<div id="data-preparation-for-the-spatial-statistics-step-6" class="section level1">
+<h1><span class="header-section-number">7</span> Data Preparation for the Spatial Statistics (step 6)</h1>
+<div id="selecting-the-target-dataset" class="section level2">
+<h2><span class="header-section-number">7.1</span> Selecting the target dataset</h2>
+<p>The below function was created to be used in the modeling exercises to be performed, the idea is to have a standard way to get the prepared data set already prepared with correct data types and dummies.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">dataProcessedDirectory &lt;-<span class="st"> &quot;./data/processed/&quot;</span></a>
+<a class="sourceLine" id="cb6-2" title="2">shapefile_to_write &lt;-<span class="st"> </span><span class="kw">paste</span>(dataProcessedDirectory, <span class="st">&quot;crime_mg_processed.shp&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="kw">writeOGR</span>(target, </a>
+<a class="sourceLine" id="cb6-4" title="4">         <span class="dt">dsn =</span> shapefile_to_write, </a>
+<a class="sourceLine" id="cb6-5" title="5">         <span class="dt">driver =</span><span class="st">&quot;ESRI Shapefile&quot;</span>, </a>
+<a class="sourceLine" id="cb6-6" title="6">         <span class="dt">layer =</span> <span class="st">&quot;cities&quot;</span>, </a>
+<a class="sourceLine" id="cb6-7" title="7">         <span class="dt">overwrite_layer =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+</div>
 </div>
 
 
