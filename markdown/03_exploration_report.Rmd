@@ -8,46 +8,58 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(fig.pos =  "h")
 knitr::opts_knit$set(root.dir = "../")
 
-# libraries for spatial data manipulation
+# libraries for markdown
 library(rmarkdown)
-library(dplyr)
 library(knitr)
-library(rgdal)
-library(raster)
+
+# libraries for data prep
+library(dplyr)
+library(stringr)
+
+# libraries for spatial data manipulation
+library(spatialreg)
+library(maps)
+library(maptools)    
+library(rgdal)     
+library(sp)  
 library(spdep)
 library(bamlss)
-library(shapefiles)
+library(gstat)
+library(splancs)
+library(spatstat)
+library(pgirmess)
+library(classInt)
+library(spgwr)
+
+# libraries for plots and visualization
+library(RColorBrewer)
+library(tmap)
+library(ggplot2)
+library(ggExtra)
+
+# libraries for modeling
+library(MASS)
 ```
 
-# Exploration 1
+# Loading the processed data
 
-Describe your exploration 1 here, including some plots, tables or any resource used.
+After perform data preparation, we can load the processed data using the following code.
 
-```{r exploration_target_1, echo=TRUE, out.width = '100%'}
-# your code with the exploration 1 goes here
+```{r data_loading, echo=TRUE, out.width = '100%'}
+# performing data (processed) loading
+dataRawDirectory <- "./data/processed/"
+shapefile_to_read <- paste(dataRawDirectory, "crime_mg_processed.shp", sep = "")
+target <- readOGR(shapefile_to_read, encoding="UTF-8")
 ```
 
-# Exploration 2
+# Initial exploration
 
-Describe your exploration 2 here, including some plots, tables or any resource used.
+Then, we can get an initial exploration on the data and the shapefile.
 
-```{r exploration_target_2, echo=TRUE, out.width = '100%'}
-# your code with the exploration 2 goes here
+```{r initial_exploration, echo=TRUE, out.width = '100%'}
+summary(target@data)
+plot(target)
+names(target)
 ```
 
 
-# Exploration 3
-
-Describe your exploration 3 here, including some plots, tables or any resource used.
-
-```{r exploration_target_3, echo=TRUE, out.width = '100%'}
-# your code with the exploration 3 goes here
-```
-
-# Exploration n
-
-Describe your exploration n here, including some plots, tables or any resource used.
-
-```{r exploration_target_n, echo=TRUE, out.width = '100%'}
-# your code with the exploration n goes here
-```
