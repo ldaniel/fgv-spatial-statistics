@@ -207,9 +207,9 @@ mtext("Local Moran's I - URBLEVEL", cex = 1.5, side = 3, line = 1)
 legend("topleft", legend = labels, fill = colors, bty = "n")
 
 # LISA map for POPRUR 
-locm <- localmoran(target$POPRUR,lw)
+locm <- localmoran(target$POP_RUR,lw)
 
-target$sPPOV <- scale(target$POPRUR)
+target$sPPOV <- scale(target$POP_RUR)
 target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
 target$quad_sig <- NA
 target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
