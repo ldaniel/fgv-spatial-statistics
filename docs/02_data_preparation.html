@@ -411,20 +411,20 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#using-a-step-by-step-approach"><span class="toc-section-number">1</span> Using a step by step approach</a></li>
-<li><a href="#config-environment-step-1"><span class="toc-section-number">2</span> Config Environment (step 1)</a></li>
-<li><a href="#data-ingestion-step-2"><span class="toc-section-number">3</span> Data Ingestion (step 2)</a></li>
-<li><a href="#data-cleaning-step-3"><span class="toc-section-number">4</span> Data Cleaning (step 3)</a></li>
-<li><a href="#label-translation-step-4"><span class="toc-section-number">5</span> Label Translation (step 4)</a></li>
-<li><a href="#data-enhancement-step-5"><span class="toc-section-number">6</span> Data Enhancement (step 5)</a></li>
-<li><a href="#data-preparation-for-the-spatial-statistics-step-6"><span class="toc-section-number">7</span> Data Preparation for the Spatial Statistics (step 6)</a><ul>
-<li><a href="#selecting-the-target-dataset"><span class="toc-section-number">7.1</span> Selecting the target dataset</a></li>
+<li><a href="#using-a-step-by-step-approach">Using a step by step approach</a></li>
+<li><a href="#config-environment-step-1">Config Environment (step 1)</a></li>
+<li><a href="#data-ingestion-step-2">Data Ingestion (step 2)</a></li>
+<li><a href="#data-cleaning-step-3">Data Cleaning (step 3)</a></li>
+<li><a href="#label-translation-step-4">Label Translation (step 4)</a></li>
+<li><a href="#data-enhancement-step-5">Data Enhancement (step 5)</a></li>
+<li><a href="#data-preparation-for-the-spatial-statistics-step-6">Data Preparation for the Spatial Statistics (step 6)</a><ul>
+<li><a href="#selecting-the-target-dataset">Selecting the target dataset</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="using-a-step-by-step-approach" class="section level1">
-<h1><span class="header-section-number">1</span> Using a step by step approach</h1>
+<h1>Using a step by step approach</h1>
 <p>Before starting the analysis for the Spatial-Statistics, a few important steps were taken in order to prepare the source data files. These steps are listed below:</p>
 <ul>
 <li><strong>Step 01</strong>: Config Environment;</li>
@@ -437,7 +437,7 @@ $(document).ready(function () {
 <hr />
 </div>
 <div id="config-environment-step-1" class="section level1">
-<h1><span class="header-section-number">2</span> Config Environment (step 1)</h1>
+<h1>Config Environment (step 1)</h1>
 <p>This step do an initial setup configuration for the project.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># clearing everything before starting -----------------------------------------</span></a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="co"># clear environment and memory</span></a>
@@ -466,7 +466,7 @@ $(document).ready(function () {
 <hr />
 </div>
 <div id="data-ingestion-step-2" class="section level1">
-<h1><span class="header-section-number">3</span> Data Ingestion (step 2)</h1>
+<h1>Data Ingestion (step 2)</h1>
 <p>The process of data ingestion — preparing data for analysis — usually includes steps called extract (taking the data from its current location), transform (cleansing and normalizing the data), and load (placing the data in a database where it can be analyzed).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># performing data loading -----------------------------------------------------</span></a>
 <a class="sourceLine" id="cb2-2" title="2">dataRawDirectory &lt;-<span class="st"> &quot;./data/raw/&quot;</span></a>
@@ -476,7 +476,7 @@ $(document).ready(function () {
 <hr />
 </div>
 <div id="data-cleaning-step-3" class="section level1">
-<h1><span class="header-section-number">4</span> Data Cleaning (step 3)</h1>
+<h1>Data Cleaning (step 3)</h1>
 <p>The objective of this step is analysing missing values and other strange conditions. In order to accomplish this task, a few R functions were used to quickly discover missing values, like NA and empty fields.</p>
 <p>The command below was used to find out any NA values in each table.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">sapply</span>(TableName, <span class="cf">function</span>(x) <span class="kw">sum</span>(<span class="kw">is.na</span>(x)))</a></code></pre></div>
@@ -675,21 +675,21 @@ $(document).ready(function () {
 <hr />
 </div>
 <div id="label-translation-step-4" class="section level1">
-<h1><span class="header-section-number">5</span> Label Translation (step 4)</h1>
+<h1>Label Translation (step 4)</h1>
 <p>In order to make the data information more understandable, it was translated some relevant labels and domains from Czech to English.</p>
 <p>For this project this step is not required.</p>
 <hr />
 </div>
 <div id="data-enhancement-step-5" class="section level1">
-<h1><span class="header-section-number">6</span> Data Enhancement (step 5)</h1>
+<h1>Data Enhancement (step 5)</h1>
 <p>This step aims to improve the analysis by adding auxiliary information. Data enhancement is all about making sure any data that is coming into the business is being looked at with a critical eye and is being filtered down to maximize its value.</p>
 <p>For this project this step is not required.</p>
 <hr />
 </div>
 <div id="data-preparation-for-the-spatial-statistics-step-6" class="section level1">
-<h1><span class="header-section-number">7</span> Data Preparation for the Spatial Statistics (step 6)</h1>
+<h1>Data Preparation for the Spatial Statistics (step 6)</h1>
 <div id="selecting-the-target-dataset" class="section level2">
-<h2><span class="header-section-number">7.1</span> Selecting the target dataset</h2>
+<h2>Selecting the target dataset</h2>
 <p>The below function was created to be used in the modeling exercises to be performed, the idea is to have a standard way to get the prepared data set already prepared with correct data types and dummies.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">dataProcessedDirectory &lt;-<span class="st"> &quot;./data/processed/&quot;</span></a>
 <a class="sourceLine" id="cb6-2" title="2">shapefile_to_write &lt;-<span class="st"> </span><span class="kw">paste</span>(dataProcessedDirectory, <span class="st">&quot;crime_mg_processed.shp&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</a>

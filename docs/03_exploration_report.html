@@ -411,32 +411,73 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#exploration-1"><span class="toc-section-number">1</span> Exploration 1</a></li>
-<li><a href="#exploration-2"><span class="toc-section-number">2</span> Exploration 2</a></li>
-<li><a href="#exploration-3"><span class="toc-section-number">3</span> Exploration 3</a></li>
-<li><a href="#exploration-n"><span class="toc-section-number">4</span> Exploration n</a></li>
+<li><a href="#loading-the-processed-data">Loading the processed data</a></li>
+<li><a href="#initial-exploration">Initial exploration</a></li>
 </ul>
 </div>
 
-<div id="exploration-1" class="section level1">
-<h1><span class="header-section-number">1</span> Exploration 1</h1>
-<p>Describe your exploration 1 here, including some plots, tables or any resource used.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># your code with the exploration 1 goes here</span></a></code></pre></div>
+<div id="loading-the-processed-data" class="section level1">
+<h1>Loading the processed data</h1>
+<p>After perform data preparation, we can load the processed data using the following code.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># performing data (processed) loading</span></a>
+<a class="sourceLine" id="cb1-2" title="2">dataRawDirectory &lt;-<span class="st"> &quot;./data/processed/&quot;</span></a>
+<a class="sourceLine" id="cb1-3" title="3">shapefile_to_read &lt;-<span class="st"> </span><span class="kw">paste</span>(dataRawDirectory, <span class="st">&quot;crime_mg_processed.shp&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4">target &lt;-<span class="st"> </span><span class="kw">readOGR</span>(shapefile_to_read, <span class="dt">encoding=</span><span class="st">&quot;UTF-8&quot;</span>)</a></code></pre></div>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;D:\OneDrive\FGV\04_Modulos\06 - Estatistica Espacial\Spatial-Statistics\data\processed\crime_mg_processed.shp&quot;, layer: &quot;crime_mg_processed&quot;
+## with 754 features
+## It has 17 fields</code></pre>
 </div>
-<div id="exploration-2" class="section level1">
-<h1><span class="header-section-number">2</span> Exploration 2</h1>
-<p>Describe your exploration 2 here, including some plots, tables or any resource used.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># your code with the exploration 2 goes here</span></a></code></pre></div>
-</div>
-<div id="exploration-3" class="section level1">
-<h1><span class="header-section-number">3</span> Exploration 3</h1>
-<p>Describe your exploration 3 here, including some plots, tables or any resource used.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># your code with the exploration 3 goes here</span></a></code></pre></div>
-</div>
-<div id="exploration-n" class="section level1">
-<h1><span class="header-section-number">4</span> Exploration n</h1>
-<p>Describe your exploration n here, including some plots, tables or any resource used.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># your code with the exploration n goes here</span></a></code></pre></div>
+<div id="initial-exploration" class="section level1">
+<h1>Initial exploration</h1>
+<p>Then, we can get an initial exploration on the data and the shapefile.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">summary</span>(target<span class="op">@</span>data)</a></code></pre></div>
+<pre><code>##     CODMUNI           ID                        MUNIC    
+##  Min.   :  10   Min.   :  0.0   Abadia dos Dourados:  1  
+##  1st Qu.:1852   1st Qu.:188.2   Abaeté             :  1  
+##  Median :3645   Median :377.5   Abre-Campo         :  1  
+##  Mean   :3636   Mean   :377.5   Acaiaca            :  1  
+##  3rd Qu.:5444   3rd Qu.:566.8   Açucena            :  1  
+##  Max.   :7220   Max.   :755.0   Água Boa           :  1  
+##                                 (Other)            :748  
+##       AREA            INDICE94         INDICE95         GINI_91      
+##  Min.   :   40.3   Min.   : 0.260   Min.   : 0.420   Min.   :0.0000  
+##  1st Qu.:  208.9   1st Qu.: 8.143   1st Qu.: 9.643   1st Qu.:0.5129  
+##  Median :  371.4   Median :12.060   Median :13.975   Median :0.5578  
+##  Mean   :  779.4   Mean   :13.329   Mean   :15.449   Mean   :0.5330  
+##  3rd Qu.:  827.5   3rd Qu.:17.203   3rd Qu.:19.820   3rd Qu.:0.5960  
+##  Max.   :13292.1   Max.   :41.300   Max.   :47.690   Max.   :0.7127  
+##                                                                      
+##      POP_94           POP_RUR         POP_URB           POP_FEM       
+##  Min.   :    820   Min.   :  249   Min.   :    388   Min.   :    379  
+##  1st Qu.:   4724   1st Qu.: 1993   1st Qu.:   2179   1st Qu.:   2281  
+##  Median :   8602   Median : 3619   Median :   4558   Median :   4260  
+##  Mean   :  21640   Mean   : 5354   Mean   :  15856   Mean   :  10697  
+##  3rd Qu.:  18054   3rd Qu.: 6482   3rd Qu.:  10408   3rd Qu.:   8774  
+##  Max.   :2079280   Max.   :50620   Max.   :2013257   Max.   :1063988  
+##                                                                       
+##     POP_MAS          POP_TOT           URBLEVEL          PIB_PC     
+##  Min.   :   473   Min.   :    852   Min.   :0.0000   Min.   :    0  
+##  1st Qu.:  2411   1st Qu.:   4686   1st Qu.:0.3743   1st Qu.: 1665  
+##  Median :  4490   Median :   8778   Median :0.5445   Median : 2446  
+##  Mean   : 10513   Mean   :  21210   Mean   :0.5373   Mean   : 3036  
+##  3rd Qu.:  9014   3rd Qu.:  17852   3rd Qu.:0.7120   3rd Qu.: 3525  
+##  Max.   :956173   Max.   :2020161   Max.   :0.9970   Max.   :37728  
+##                                                                     
+##     X_COORD          Y_COORD      
+##  Min.   :-50.81   Min.   :-22.81  
+##  1st Qu.:-45.55   1st Qu.:-21.19  
+##  Median :-44.06   Median :-20.01  
+##  Mean   :-44.22   Mean   :-19.81  
+##  3rd Qu.:-42.76   3rd Qu.:-18.77  
+##  Max.   :-40.03   Max.   :-14.46  
+## </code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">plot</span>(target)</a></code></pre></div>
+<p><img src="03_exploration_report_files/figure-html/initial_exploration-1.png" width="100%" /></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">names</span>(target)</a></code></pre></div>
+<pre><code>##  [1] &quot;CODMUNI&quot;  &quot;ID&quot;       &quot;MUNIC&quot;    &quot;AREA&quot;     &quot;INDICE94&quot; &quot;INDICE95&quot;
+##  [7] &quot;GINI_91&quot;  &quot;POP_94&quot;   &quot;POP_RUR&quot;  &quot;POP_URB&quot;  &quot;POP_FEM&quot;  &quot;POP_MAS&quot; 
+## [13] &quot;POP_TOT&quot;  &quot;URBLEVEL&quot; &quot;PIB_PC&quot;   &quot;X_COORD&quot;  &quot;Y_COORD&quot;</code></pre>
 </div>
 
 

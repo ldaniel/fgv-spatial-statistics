@@ -27,5 +27,5 @@ output:
   html_document: 
     theme: cosmo
     highlight: tango
-    number_sections: yes
+    number_sections: no
     toc: yes
