@@ -8,171 +8,627 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(fig.pos =  "h")
 knitr::opts_knit$set(root.dir = "../")
 
-# loading required libraries and scripts
-# libraries for data prep
-library(dplyr)
-library(readr)
-library(magrittr)
-library(forcats)
-library(lubridate)
-library(stringr)
-library(feather)
-library(fastDummies)
-library(reshape2)
+# libraries for markdown
+library(rmarkdown)
 library(knitr)
 
-#libraries for plots
-library(ggplot2)
-library(ggthemes)
-library(ggcorrplot)
-library(ggpubr)
-library(plotly)
+# libraries for data prep
+library(dplyr)
+library(stringr)
 
-# libraries for data clean
-library(VIM)
-library(rms)
-library(mctest)
+# libraries for spatial data manipulation
+library(spatialreg)
+library(maps)
+library(maptools)    
+library(rgdal)     
+library(sp)  
+library(spdep)
+library(bamlss)
+library(gstat)
+library(splancs)
+library(spatstat)
+library(pgirmess)
+library(classInt)
+library(spgwr)
+
+# libraries for plots and visualization
+library(RColorBrewer)
+library(tmap)
+library(ggplot2)
+library(ggExtra)
 
 # libraries for modeling
-library(caret)
-library(gmodels)
 library(MASS)
-library(rpart)
-library(rpart.plot)
-library(adabag)
-library(randomForest)
-
-# libraries for measures
-library(hmeasure)
-library(pROC)
-```
-
-```{r scripts_evaluation, include=FALSE}
-# loading required steps before performing the analysis
-source("./src/util/auxiliary_functions.R")
 ```
 
 # Objective
 
-Describe the objetive of this report.
+The objective of this reports is to answer the Spatial Statistcs assignment class given by the professor Eduardo Franscisco.
+
+The target dataset and shapefile is the one already processed during the data preparation phase. Thus, for the final reports we have to start by loading the processed shapefile.
+
+```{r data_loading_final_report, echo=TRUE, out.width = '100%'}
+# performing data (processed) loading
+dataRawDirectory <- "./data/processed/"
+shapefile_to_read <- paste(dataRawDirectory, "crime_mg_processed.shp", sep = "")
+target <- readOGR(shapefile_to_read, encoding="UTF-8")
+```
 
 *******************************************************************************
 
-# Model evaluation
+# Pergunta 1 
 
-## Getting the predicted score from each model
+Qual das variáveis quantitativas apresentadas no shapefile crime_mg apresenta maior auto-correlação espacial? Descreva como implementou a matriz de vizinhança. Apresente o I de Moran e o mapa de auto-correlação espacial local (LISA map) da variável escolhida e também de pelo menos outras 3 variáveis. 
 
-We will start this task by consolidating all the actual and predicted score for all models in a single data frame for the full, train and test datasets.
+Obs: desconsidere as variáveis Codmuni, ID, X_coord e Y_coord nessa análise.
 
-```{r get_scores_evaluation, echo=TRUE}
-# your code goes here
+**Resposta**
+
+```{r pergunta_1, echo=TRUE, out.width = '100%'}
+# getting the centroids of the polygons
+xy <- coordinates(target) 
+
+# neighborhood matrix from spatial polygons / adjacent polygons
+
+# using the spdep library to generate first order
+ap <- poly2nb(target, queen = T, row.names = target$ID)
+lw <- nb2listw(ap, style = "W", zero.policy = TRUE)
+
+plot(target, col = 'cadetblue2', border = 'deepskyblue4', lwd = 1)
+plot(ap, xy, col = 'red', lwd = 2, add = TRUE)
+
+# using the bamlss library
+nm <- neighbormatrix(target, type = "boundary")
+
+plotneighbors(target)
+plotneighbors(target, type = "delaunay")
+plotneighbors(target, type = "dist", d1 = 0, d2 = 0.15)
+
+# global autocorrelation tests: Moran's I
+moran.test.AREA     <- moran.test(target$AREA, listw = lw, zero.policy = T) 
+moran.test.INDICE94 <- moran.test(target$INDICE94, listw = lw, zero.policy = T)
+moran.test.INDICE95 <- moran.test(target$INDICE95, listw = lw, zero.policy = T)
+moran.test.GINI_91  <- moran.test(target$GINI_91, listw = lw, zero.policy = T)
+moran.test.POP_94   <- moran.test(target$POP_94, listw = lw, zero.policy = T)
+moran.test.POP_RUR  <- moran.test(target$POP_RUR, listw = lw, zero.policy = T)
+moran.test.POP_URB  <- moran.test(target$POP_URB, listw = lw, zero.policy = T)
+moran.test.POP_FEM  <- moran.test(target$POP_FEM, listw = lw, zero.policy = T)
+moran.test.POP_MAS  <- moran.test(target$POP_MAS, listw = lw, zero.policy = T)
+moran.test.POP_TOT  <- moran.test(target$POP_TOT, listw = lw, zero.policy = T)
+moran.test.URBLEVEL <- moran.test(target$URBLEVEL, listw = lw, zero.policy = T)
+moran.test.PIB_PC   <- moran.test(target$PIB_PC, listw = lw, zero.policy = T)
+
+moran.test.all <- rbind(t(data.frame("AREA" = moran.test.AREA$estimate)),
+                        t(data.frame("INDICE94" = moran.test.INDICE94$estimate)),
+                        t(data.frame("INDICE95" = moran.test.INDICE95$estimate)),
+                        t(data.frame("GINI_91" = moran.test.GINI_91$estimate)),
+                        t(data.frame("POP_94" = moran.test.POP_94$estimate)),
+                        t(data.frame("POP_RUR" = moran.test.POP_RUR$estimate)),
+                        t(data.frame("POP_URB" = moran.test.POP_URB$estimate)),
+                        t(data.frame("POP_FEM" = moran.test.POP_FEM$estimate)),
+                        t(data.frame("POP_MAS" = moran.test.POP_MAS$estimate)),
+                        t(data.frame("POP_TOT" = moran.test.POP_TOT$estimate)),
+                        t(data.frame("URBLEVEL" = moran.test.URBLEVEL$estimate)),
+                        t(data.frame("PIB_PC" = moran.test.PIB_PC$estimate)))
+
+moran.test.all <- as_tibble(moran.test.all, rownames = "Variables")
+moran.test.all %>% arrange(desc(`Moran I statistic`))
+
+print(moran.test.all)
+
+# Moran scatterplot for INDICE94
+par(mar = c(4,4,1.5,0.5))
+moran.plot(target$INDICE94, 
+           listw = lw, 
+           zero.policy = T,
+           pch = 16, 
+           col = "black",
+           cex = .5, 
+           quiet = F,
+           labels = as.character(target$MUNIC),
+           xlab = "Percent for INDICE94",
+           ylab = "Percent for INDICE94 (Spatial Lag)", 
+           main = "Moran Scatterplot")
+
+# LISA map for INDICE94 
+locm <- localmoran(target$INDICE94,lw)
+
+target$sPPOV <- scale(target$INDICE94)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+
+plot(x = target$sPPOV, y = target$lag_sPPOV, main = "Moran Scatterplot PPOV")
+abline(h = 0, v = 0)
+abline(lm(target$lag_sPPOV ~ target$sPPOV), lty = 3, lwd = 4, col = "red")
+
+# check out the outliers click on one or two and then hit escape or click finish
+# identify(target$sPPOV, target$lag_sPPOV, target$INDICE94, cex = 0.8)
+
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - INDICE94", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+
+# LISA map for INDICE95 
+locm <- localmoran(target$INDICE95,lw)
+
+target$sPPOV <- scale(target$INDICE95)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - INDICE95", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+
+# LISA map for URBLEVEL 
+locm <- localmoran(target$URBLEVEL,lw)
+
+target$sPPOV <- scale(target$URBLEVEL)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - URBLEVEL", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
+
+# LISA map for POPRUR 
+locm <- localmoran(target$POP_RUR,lw)
+
+target$sPPOV <- scale(target$POP_RUR)
+target$lag_sPPOV <- lag.listw(lw, target$sPPOV)
+target$quad_sig <- NA
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV >= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 1
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 2
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 3
+target@data[(target$sPPOV >= 0 & target$lag_sPPOV <= 0) & (locm[, 5] <= 0.05), "quad_sig"] <- 4
+target@data[(target$sPPOV <= 0 & target$lag_sPPOV >= 0) & (locm[, 5] > 0.05), "quad_sig"] <- 5 
+
+breaks <- seq(1, 5, 1)
+labels <- c("High-High", "Low-Low", "High-Low", "Low-High", "Not Signif.")
+np <- findInterval(target$quad_sig, breaks)
+colors <- c("red", "blue", "lightpink", "skyblue2", "white")
+par(mar = c(4,0,4,1))
+plot(target, col = colors[np])
+mtext("Local Moran's I - POPRUR", cex = 1.5, side = 3, line = 1)
+legend("topleft", legend = labels, fill = colors, bty = "n")
 ```
 
-## Getting performance measures for each model.
+*******************************************************************************
 
-To calculate the performance measures, derived from the confusion matrix, of each model we need to find the score cut off that best split our test dataset into Defaulters and Non-Defaulters.
+# Pergunta 2
 
-In this exercise we decide to not prioritize the accuracy on predicting Defaulters and Non-Defaulters, therefore we are looking for the score cut off that best predict each class equally.
+Implemente o modelo espacial auto-regressivo (SAR) da variável Indice95  (índice de criminalidade em 1995 de Minas Gerais) a partir de apenas uma variável independente (não pode ser Indice94, Codmuni, ID, X_coord nem Y_coord). Apresente o resultado da regressão linear simples e da regressão linear espacial. Apresente as equações e interprete seus coeficientes.
 
-We will use the custom functions described in Auxiliary metrics functions topic in the Data Preparation session of this site.
+**Resposta**
 
-With the returned object from these functions we can plot the comparison between TPR (True Positive Rate) and TNR (True Negative Rate) to find the best cut off.
+Equação da regressão linear simples:
 
-```{r get_measures_evaluation, echo=TRUE, out.width= '100%'}
-## getting cut off measures -----------------------------------------------------------------
-# your code goes here
+$INDICE95= 6.3208+16.9877*URBLEVEL$
+
+Interpretando os coeficientes do modelo de regressão linear simples temos que, para cada ponto adicional do índice de urbanização (URBLEVEL), é esperado um aumento de aproximadamente 16.99 no índice de criminalidade INDICE95.
+
+Para um município com o índice de urbanização 0 é esperado um índice de criminalidade de aproximadamente 6.32.
+
+Equação da regressão espacial (SAR):
+
+$INDICE95= 2.35307+13.93704*URBLEVEL+0.35437*LAG_INDICE95$
+
+Interpretando os coeficientes do modelo de regressão espacial (SAR) temos que, para cada ponto adicional do índice de urbanização (URBLEVEL), é esperado um aumento de aproximadamente 13.94 no índice de criminalidade INDICE95.
+
+
+```{r pergunta_2, echo=TRUE, out.width = '100%'}
+# initial setup
+res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
+                                space = "rgb")
+pal <- res.palette(5)
+par(mar = c(2, 0, 4, 0))
+
+# linear regresion model
+target.lm.model <- lm(INDICE95 ~ URBLEVEL, data = target)
+summary(target.lm.model)
+
+target.lm.model.residuals <- target.lm.model$residuals
+
+target.lm.model.class_fx <- classIntervals(target.lm.model.residuals, 
+                                           n = 5,
+                                           style = "fixed",
+                                           fixedBreaks = c(-50,-25,-5,5,25,50),
+                                           rtimes = 1)
+
+cols.lm <- findColours(target.lm.model.class_fx, pal)
+
+plot(target, col = cols.lm, main = "OLS Model", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.lm, "palette"), bty = "n",
+       legend = names(attr(cols.lm, "table")), title = "Residuals from OLS Model",
+       ncol = 5)
+
+moran.test(target.lm.model.residuals, listw = lw, zero.policy = T)
+
+# SAR model (Spatial Auto-Regressive)
+target.sar.model <- lagsarlm(INDICE95 ~ URBLEVEL, 
+                             data = target, 
+                             listw = lw,
+                             zero.policy = T, 
+                             tol.solve = 1e-12)
+summary(target.sar.model)
+target.sar.model$rest.se
+target.sar.model$residuals
+
+target.sar.model.residuals <- target.sar.model$residuals
+
+target.sar.model.class_fx <- classIntervals(target.sar.model.residuals, 
+                                            n = 5, 
+                                            style = "fixed",
+                                            fixedBreaks = c(-50,-25,-5,5,25,50),
+                                            rtimes = 1)
+
+cols.sar <- findColours(target.sar.model.class_fx, pal)
+
+plot(target, col = cols.sar, main = "SAR Model", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.sar, "palette"), bty = "n",
+       legend = names(attr(cols.sar, "table")), title = "Residuals from SAR Model",
+       ncol = 5)
+
+moran.test(target.sar.model.residuals, listw = lw, zero.policy = T)
 ```
 
-Having the best score cut off for each model we use **HMeasure()** function from **hmeasure** library to calculate the full set of metrics for classification methods.
+*******************************************************************************
 
-```{r get_measures_full_evaluation, echo=TRUE, out.width= '100%', warning=FALSE}
-# your code goes here
+# Pergunta 3
+
+Para essa variável que você escolheu, o modelo espacial SAR apresentou ganhos significantes com relação ao modelo linear simples? Justifique sua resposta. 
+
+Obs: Sugere-se fazer essa atividade no GeoDA ou no R.
+
+**Reposta**
+
+Sim, o R-squared aumentou de 0.2522 no modelo de regressão linear simples para 0.331410 no modelo de regressão espacial, conforme saída do GeoDa da figura abaixo.
+
+![Saída do GeoDa para o R-squared da regressão espacial (SAR).](https://raw.githubusercontent.com/ldaniel/Spatial-Statistics/master/images/saida_geoda_rsquared_sar.png)
+
+*******************************************************************************
+
+# Pergunta 4
+
+Implemente a regressão espacial GWR da variável Indice95 (índice de criminalidade em 1995 de Minas Gerais) a partir de apenas uma variável independente (não pode ser Indice94, Codmuni, ID, X_coord nem Y_coord). Apresente o resultado da regressão linear simples e da regressão linear espacial por GWR. Apresente medidas da distribuição dos coeficientes (min, Q1, Q2, Q3, máx), e da distribuição do R2 (min, Q1, Q2, Q3, máx) e apresente os resultados globais da regressão (R2 global, basicamente). 
+
+Obs: Sugere-se fazer essa atividade no ArcGIS ou no R.
+
+**Resposta**
+
+Calculando o R-Squared global conforme demonstrado na Listagem 7, temos como resultado 0.4814094.
+
+```{r pergunta_4, echo=TRUE, out.width = '100%'}
+# initial setup
+res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
+                                space = "rgb")
+pal <- res.palette(5)
+par(mar = c(2, 0, 4, 0))
+
+coords <- cbind(target$X_COORD, target$Y_COORD)
+
+# GWR model (Geographically Weighted Regression)
+target.gwr.sel <- gwr.sel(INDICE95 ~ URBLEVEL, 
+                          data = target, 
+                          coords = coords, 
+                          adapt = TRUE, 
+                          method = "aic",
+                          gweight = gwr.Gauss,
+                          verbose = TRUE)
+
+target.gwr.model <- gwr(INDICE95 ~ URBLEVEL, 
+                        data = target, 
+                        coords = coords, 
+                        bandwidth = target.gwr.sel,
+                        gweight = gwr.Gauss,
+                        adapt = target.gwr.sel,
+                        hatmatrix = TRUE)
+summary(target.gwr.model)
+
+# calculate global residual SST (SQT)
+SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
+GWR_SSE <- target.gwr.model$results$rss
+r2_GWR <- 1 - (GWR_SSE / SST)
+r2_GWR
+
+# residuals
+target.gwr.residuals <- target.gwr.model$SDF$gwr.e
+
+target.gwr.residuals.classes_fx <- classIntervals(target.gwr.residuals, n = 5, style = "fixed", 
+                                                  fixedBreaks = c(-50,-25,-5,5,25,50), 
+                                                  rtimes = 1)
+cols.gwr.residuals <- findColours(target.gwr.residuals.classes_fx, pal)
+
+plot(target, col = cols.gwr.residuals, main = "GWR Model (residuals)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.residuals,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.residuals, "table")), 
+       title = "Residuals from GWR Model", ncol = 5)
+
+moran.test(target.gwr.residuals, listw = lw, zero.policy = T)
+
+
+# coefficients
+target.gwr.coefficients <- target.gwr.model$SDF$URBLEVEL
+
+target.gwr.coefficients.classes_fx <- classIntervals(target.gwr.coefficients, n = 5, style = "fixed", 
+                                                     fixedBreaks=c(-.005,-.003,-.001,.001,.003,.005), 
+                                                     rtimes = 1)
+cols.gwr.coefficients <- findColours(target.gwr.coefficients.classes_fx, pal)
+
+plot(target, col = cols.gwr.coefficients, main = "GWR Model (coefficients)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.coefficients,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.coefficients, "table")),
+       title = "Local Coefficient Estimates (URBLEVEL)", ncol = 3)
+
+moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 ```
 
-Below are the metrics on the train dataset:
-```{r see_train_measures_evaluation, echo=TRUE, out.width= '100%'}
-# your code goes here
+*******************************************************************************
+
+# Pergunta 5 
+
+Para essa variável que você escolheu, o modelo espacial GWR apresentou ganhos significantes com relação ao modelo linear simples? Justifique sua resposta.
+
+**Resposta**
+
+Sim, o R-squared aumentou de 0.2522 no modelo de regressão linear simples para 0.4814094 no modelo GWR.
+
+*******************************************************************************
+
+# Pergunta 6 
+
+Implemente um modelo de regressão linear multivariado stepwise da variável Indice95 (significante a 5% ou 10%, utilize o que achar melhor). Depois, “promova-o” a um modelo SAR. Apresente os resultados comparados (equação, $R^{2}$). Qual modelo você escolheria como final? Se desejar, apresente mapas que sustente sua justificativa.
+
+**Resposta**
+
+Os valores de $R^{2}$, são:
+
+*	SAR $R^{2}$: 0.7052
+*	LM com stepwise $R^{2}$: 0.6982
+
+Escolheríamos o com o maior $R^{2}$, ou seja, o SAR. Baseado nos mapas e comparando os valores previstos contra os reais, podemos ver que a distribuição do modelo se aproxima adequadamente dos valores observados em cada distrito.
+
+
+```{r pergunta_6, echo=TRUE, out.width = '100%'}
+# initial exploration in INDICE95 x AREA
+indice95_by_urblevel_plot <- ggplot(data = target@data, 
+                                    aes(x = target$INDICE95, 
+                                        y = target$URBLEVEL, 
+                                        color = target$URBLEVEL)) +
+  geom_point() +
+  theme(legend.position = "none") +
+  xlab("INDICE95") +
+  ylab("AREA")
+
+ggMarginal(indice95_by_urblevel_plot, type = "histogram")
+
+# runing the linear model multivaluated and looking at the residuals
+target.ols.model <- lm(INDICE95 ~ 
+                         AREA + 
+                         INDICE94 + 
+                         GINI_91 +
+                         POP_94 +
+                         POP_RUR +
+                         POP_URB +
+                         POP_FEM +
+                         POP_MAS +
+                         POP_TOT +
+                         URBLEVEL +
+                         PIB_PC, 
+                       data = target)
+
+summary(target.ols.model)
+
+target$resid <- residuals(target.ols.model)
+spplot(target, "resid", main = "Residuals")
+
+# runing the lm multivaluated model
+target.lm.multivaluated.model <- lm(formula =INDICE95 ~ 
+                                      AREA + 
+                                      INDICE94 + 
+                                      GINI_91 +
+                                      POP_94 +
+                                      POP_RUR +
+                                      POP_URB +
+                                      POP_FEM +
+                                      POP_MAS +
+                                      POP_TOT +
+                                      URBLEVEL +
+                                      PIB_PC, 
+                                    data = target)
+
+summary(target.lm.multivaluated.model)
+
+# performing the stepwise selection
+target.sar.model.stepwise <- step(target.lm.multivaluated.model, 
+                                       direction = "both", 
+                                       test = "F")
+
+summary(target.sar.model.stepwise)
+
+# runing the SAR model
+target.lagsarlm.model <- lagsarlm(formula =INDICE95 ~ 
+                                       AREA + 
+                                       INDICE94 + 
+                                       GINI_91 +
+                                       POP_94 +
+                                       POP_RUR +
+                                       POP_URB +
+                                       POP_FEM +
+                                       POP_MAS +
+                                       POP_TOT +
+                                       URBLEVEL +
+                                       PIB_PC, 
+                                     data = target,
+                                     listw = lw, 
+                                     quiet = T)
+summary(target.lagsarlm.model)
+
+# calculate global residual SST (SQT)
+SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
+GWR_SSE <- target.lagsarlm.model$SSE
+r2_GWR <- 1 - (GWR_SSE / SST)
+r2_GWR
+
+# maps
+target$fitted_sem <- target.lagsarlm.model$fitted.values
+spplot(target, "fitted_sem", main = "Fitted values")
+
+target$actual_sem <- target.lagsarlm.model$y
+spplot(target, "fitted_sem", main = "Actual values")
+
+names(target.sar.model.stepwise$coefficients) <- 
+  stringr::str_sub(names(target.sar.model.stepwise$coefficients), 1, 25)
+summary(target.sar.model.stepwise)
 ```
 
-Below are the metrics on the test dataset:
-```{r see_score_measures_evaluation, echo=TRUE, out.width= '100%'}
-# your code goes here
+*******************************************************************************
+
+# Pergunta 7 (bônus)
+
+Promova o modelo final linear da Pergunta 6 a um modelo GWR. Apresente os resultados comparados (equação, R2). Qual modelo você escolheria como final? Se desejar, apresente mapas que sustente sua justificativa.
+
+**Resposta**
+
+Calculando o R-Squared global, temos como resultado 0.7473547.
+
+Escolheríamos o com o maior $R^{2}$, ou seja, o GWR stepwise. Baseado nos mapas e comparando os valores previstos contra os reais, podemos ver que a distribuição do modelo se aproxima adequadamente dos valores observados em cada distrito.
+
+
+```{r pergunta_7, echo=TRUE, out.width = '100%'}
+# initial setup
+res.palette <- colorRampPalette(c("red","orange","white","lightgreen","green"), 
+                                space = "rgb")
+pal <- res.palette(5)
+par(mar = c(2, 0, 4, 0))
+
+# GWR model (Geographically Weighted Regression)
+target.gwr.multivaluated.sel <- gwr.sel(INDICE95 ~ 
+                                          INDICE94 +
+                                          GINI_91 + 
+                                          URBLEVEL, 
+                                          data = target, 
+                                          coords = coords, 
+                                          adapt = TRUE, 
+                                          method = "aic",
+                                          gweight = gwr.Gauss,
+                                          verbose = TRUE)
+
+target.gwr.multivaluated.model <- gwr(INDICE95 ~ 
+                                        INDICE94 +
+                                        GINI_91 + 
+                                        URBLEVEL, 
+                                        data = target, 
+                                        coords = coords, 
+                                        bandwidth = target.gwr.multivaluated.sel,
+                                        gweight = gwr.Gauss,
+                                        adapt = target.gwr.multivaluated.sel,
+                                        hatmatrix = TRUE)
+
+# calculate global residual SST (SQT)
+SST <- sum((target$INDICE95 - mean(target$INDICE95)) ^ 2)
+GWR_SSE <- target.gwr.multivaluated.model$results$rss
+r2_GWR <- 1 - (GWR_SSE / SST)
+r2_GWR
+
+# maps
+target$fitted_sem <- target.gwr.multivaluated.model$lm$fitted.values
+spplot(target, "fitted_sem", main = "Fitted values")
+
+target$actual_sem <- target.gwr.multivaluated.model$lm$y
+spplot(target, "fitted_sem", main = "Actual values")
+
+# residuals
+target.gwr.residuals <- target.gwr.model$SDF$gwr.e
+
+target.gwr.residuals.classes_fx <- classIntervals(target.gwr.residuals, n = 5, style = "fixed", 
+                                                  fixedBreaks = c(-50,-25,-5,5,25,50), 
+                                                  rtimes = 1)
+cols.gwr.residuals <- findColours(target.gwr.residuals.classes_fx, pal)
+
+plot(target, col = cols.gwr.residuals, main = "GWR Model (residuals)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.residuals,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.residuals, "table")), 
+       title = "Residuals from GWR Model", ncol = 5)
+
+moran.test(target.gwr.residuals, listw = lw, zero.policy = T)
+
+# coefficients
+target.gwr.coefficients <- target.gwr.model$SDF$URBLEVEL
+
+target.gwr.coefficients.classes_fx <- classIntervals(target.gwr.coefficients, n = 5, style="fixed", 
+                                                     fixedBreaks=c(-.005,-.003,-.001,.001,.003,.005), 
+                                                     rtimes = 1)
+cols.gwr.coefficients <- findColours(target.gwr.coefficients.classes_fx, pal)
+
+plot(target, col = cols.gwr.coefficients, main = "GWR Model (coefficients)", border = "grey")
+legend(x = "bottom", cex = 1, fill = attr(cols.gwr.coefficients,"palette"), bty = "n",
+       legend = names(attr(cols.gwr.coefficients, "table")),
+       title = "Local Coefficient Estimates (urblevel)", ncol = 3)
+
+moran.test(target.gwr.coefficients, listw = lw, zero.policy = T)
 ```
 
-## Evaluating performance of each model
+*******************************************************************************
 
-In this session we interpret the set of metrics we got from above steps.
+# Pergunta 8 (bônus 2)
 
-### Density Plots
+Produza um mapa de alta qualidade do shapefile crime_mg utilizando a extensão tmap. Apresente o código completo e o mapa produzido em sua resposta.
 
-Here we look back to the score density plot produced by each model side by side.
+**Resposta**
 
-Interesting enough to notice here how narrow the scores produced from Decision Tree model compared to the other models.
+```{r pergunta_8, eval = FALSE}
+# interactive map
+tmap_mode("plot")
+tm_shape(target) +
+  tm_polygons("INDICE95", 
+              id = "MUNIC", 
+              title = "indice 1995", 
+              contrast = 0.7,
+              palette = "-Blues",
+              border.col = "gray30") +
+  tm_format("World") 
 
-As discussed in the Decision Tree session this model is extremely limited for this dataset with a huge variance in the tree depending on the train data and hyper parameters tuning.
+# classic map
+tmap_mode("plot")
+tm_shape(target) +
+  tm_polygons("INDICE95", id = "MUNIC") +
+  tm_compass(position = c(.1, .1), color.light = "grey90") +
+  tm_credits("Eckert IV projection", position = c("RIGHT", "BOTTOM")) +
+  tm_style("classic")
 
-We are using our custom function **Score_Histograms** described in the Function topic of Data Preparation session of this site.
-
-```{r density_plots_evaluation, echo=TRUE, out.width= '100%'}
-# your code goes here
 ```
 
-### Score Boxplots
+![Plot do tmap com alta qualidade.](https://raw.githubusercontent.com/ldaniel/Spatial-Statistics/master/images/tmap01.png)
 
-Let's now look at the score boxplots of each model side by side.
-
-This plot is a great way to visualize how well each model discriminate Defaulters and Non-Defaulters.
-
-Here we can see that Random Forest and Boosting have an edge on the classification power against the other models. Both of them have not presented interquartile overlap in their box plot, another important sign of discrimination power of the models.
-
-Our Decision Tree is right on the limit.
-
-```{r boxplots_plots_evaluation, echo=TRUE, out.width= '100%'}
-# your code goes here
-```
-
-### KS Plots
-
-Now we look to the custom KS plots of each model side by side.
-
-The KS metric is the maximum distance between the cumulative distribution functions of two samples.
-
-KS metric ranges from 0 to 1, 0 meaning that there is no discrimination at all and 1 meaning a full discrimination.
-
-In this case we are comparing the cumulative distribution sample of Defaulters and Non-Defaulters.
-
-The bigger the KS metric the better the model are to discriminate Defaulters to Non-Defaulters.
-
-```{r KS_plots_evaluation, echo=TRUE, out.width= '100%'}
-# your code goes here
-```
-
-### ROC Curve
-
-Now we look to the ROC curve of our models.
-
-The Receiver Operating Characteristic Curve is a plot that shows the discrimination ability of a binary classifier model as its classification threshold changes.
-
-We get this chart by plotting the **True Positive Rate (TPR)** against the **False Positive Rate (FPR)** at different threshold settings.
-
-The bigger the Area Under the Curve (AUC) the better the model is in classifying the observation.
-
-```{r ROC_evaluation, echo=TRUE, out.width= '100%', warning=FALSE}
-# your code goes here
-```
-
-### Acurracy
-
-We finally look at the Confusion Matrix at the best cut off of each model to get a sense of the accuracy we were able to get in this exercise.
-
-We will use the custom functions described in Auxiliary metrics functions topic in the Data Preparation session of this site.
-
-Boosting is the best model we got in this exercise following very closely by Random Forest.
-
-```{r accuracy_evaluation, echo=TRUE, out.width= '100%'}
-# your code goes here
-```
-
-# Final considerations and project limitations
-
-Describe your final considerations and project limitations here.
+![Outro plot do tmap com alta qualidade.](https://raw.githubusercontent.com/ldaniel/Spatial-Statistics/master/images/tmap02.png)
